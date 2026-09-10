@@ -26,85 +26,70 @@ body{
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 :focus-visible{outline:3px solid var(--vela); outline-offset:2px}
 
-/* ---------- header ---------- */
-header{
-  flex:0 0 auto; display:flex; align-items:center; gap:12px;
-  padding:12px 16px 10px; border-bottom:1px solid var(--borde); background:var(--panel);
-}
+header{flex:0 0 auto;display:flex;align-items:center;gap:12px;
+  padding:12px 16px 10px;border-bottom:1px solid var(--borde);background:var(--panel)}
 .parada-actual{flex:1;min-width:0}
 .parada-actual b{display:block;font-size:20px;font-weight:650;letter-spacing:-.01em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .parada-actual span{display:block;font-size:12.5px;color:var(--tenue)}
-.sync{
-  flex:0 0 auto; display:flex; align-items:center; gap:7px;
-  font-size:12.5px; color:var(--tenue); background:var(--noche);
-  border:1px solid var(--borde); border-radius:999px; padding:6px 11px 6px 9px;
-}
+.sync{flex:0 0 auto;display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tenue);
+  background:var(--noche);border:1px solid var(--borde);border-radius:999px;padding:6px 11px 6px 9px}
 .punto{width:9px;height:9px;border-radius:50%;background:var(--retirado);flex:0 0 auto}
 .punto.ok{background:var(--paso)} .punto.mal{background:var(--falta)} .punto.espera{background:var(--vela)}
 .icono-btn{flex:0 0 auto;width:42px;height:42px;border-radius:11px;border:1px solid var(--borde);
   display:grid;place-items:center;font-size:19px;background:var(--noche)}
 
-/* ---------- main ---------- */
 main{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .vista{display:none;padding:16px} .vista.on{display:block}
 
-/* ---------- escáner ---------- */
 #lector{width:100%;border-radius:var(--r);overflow:hidden;background:#000;min-height:230px}
 #lector video{width:100%!important;display:block}
 .aviso-cam{padding:22px 18px;text-align:center;color:var(--tenue);font-size:14.5px}
 .manual{margin-top:18px}
 .manual label{display:block;font-size:14px;color:var(--tenue);margin-bottom:8px}
 .fila-cod{display:flex;gap:9px}
-#codigo{
-  flex:1;min-width:0;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
+#codigo{flex:1;min-width:0;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
   color:var(--texto);padding:15px 16px;font-size:26px;font-weight:600;letter-spacing:.22em;
-  text-transform:uppercase;text-align:center
-}
+  text-transform:uppercase;text-align:center}
 #codigo::placeholder{letter-spacing:.1em;font-weight:400;font-size:17px;color:#54688A}
-.btn{
-  background:var(--panel-alto);border:1px solid var(--borde);border-radius:var(--r);
-  padding:15px 20px;font-weight:600;font-size:16px;min-height:56px
-}
+.btn{background:var(--panel-alto);border:1px solid var(--borde);border-radius:var(--r);
+  padding:15px 20px;font-weight:600;font-size:16px;min-height:56px}
 .btn.primario{background:var(--vela);color:#241704;border-color:var(--vela)}
 .btn.ancho{width:100%;margin-top:12px}
 .btn:active{transform:scale(.985)}
 
-/* ---------- resumen ---------- */
-.resumen{display:flex;gap:10px;margin-bottom:16px}
-.tarjeta{
-  flex:1;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
-  padding:13px 14px;text-align:left
-}
-.tarjeta .n{font-size:34px;font-weight:680;line-height:1;letter-spacing:-.02em;
-  font-variant-numeric:tabular-nums}
+.resumen{display:flex;gap:10px;margin-bottom:14px}
+.tarjeta{flex:1;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
+  padding:13px 14px;text-align:left}
+.tarjeta .n{font-size:34px;font-weight:680;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .tarjeta .t{font-size:12.5px;color:var(--tenue);margin-top:5px}
 .tarjeta.falta .n{color:var(--falta)} .tarjeta.paso .n{color:var(--paso)}
+.entregadas{font-size:13px;color:var(--tenue);margin-bottom:16px;
+  padding:11px 14px;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r)}
+.entregadas b{color:var(--texto);font-weight:650;font-variant-numeric:tabular-nums}
 
-/* ---------- lista ---------- */
 .buscador{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
   color:var(--texto);padding:13px 15px;font-size:16px;margin-bottom:12px}
-.persona{
-  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+.persona{display:flex;align-items:center;gap:13px;width:100%;text-align:left;
   background:var(--panel);border:1px solid var(--borde);border-left-width:4px;
-  border-radius:var(--r);padding:13px 14px;margin-bottom:8px;min-height:62px
-}
+  border-radius:var(--r);padding:13px 14px;margin-bottom:8px;min-height:62px}
 .persona.esta-paso{border-left-color:var(--paso)}
 .persona.esta-falta{border-left-color:var(--falta)}
 .persona.esta-retirado{border-left-color:var(--retirado);opacity:.62}
+.persona.sin-entregar{border-left-color:#2E4166;opacity:.5}
 .persona .cuerpo{flex:1;min-width:0}
 .persona .nom{font-size:16.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.persona .nom.anon{font-weight:500;color:var(--tenue);font-style:italic}
 .persona .meta{font-size:12px;color:var(--tenue);margin-top:3px;font-variant-numeric:tabular-nums}
 .tramos{display:flex;gap:4px;flex:0 0 auto}
 .tramo{width:10px;height:26px;border-radius:3px;background:#243450}
 .tramo.p{background:var(--paso)} .tramo.r{background:var(--retirado)}
 .vacio{text-align:center;color:var(--tenue);padding:44px 20px;font-size:15px}
 .vacio b{display:block;color:var(--paso);font-size:19px;margin-bottom:6px}
+.grupo-tit{font-size:13px;color:var(--tenue);margin:22px 0 10px;
+  padding-bottom:7px;border-bottom:1px solid var(--borde)}
 
-/* ---------- nav ---------- */
-nav{
-  flex:0 0 auto;display:flex;border-top:1px solid var(--borde);background:var(--panel)
-}
+nav{flex:0 0 auto;display:flex;border-top:1px solid var(--borde);background:var(--panel)}
 nav button{flex:1;padding:11px 4px 13px;color:var(--tenue);font-size:12.5px;
   display:flex;flex-direction:column;align-items:center;gap:3px;border-top:3px solid transparent}
 nav button .g{font-size:21px;line-height:1}
@@ -112,11 +97,8 @@ nav button.on{color:var(--texto);border-top-color:var(--vela)}
 nav .badge{background:var(--falta);color:#2A0B06;border-radius:999px;padding:0 6px;
   font-size:11px;font-weight:700;margin-left:4px}
 
-/* ---------- feedback pantalla completa ---------- */
-#flash{
-  position:fixed;inset:0;z-index:60;display:none;flex-direction:column;
-  align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center
-}
+#flash{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center}
 #flash.on{display:flex}
 #flash .g{font-size:64px;line-height:1}
 #flash .nombre{font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-.02em;word-break:break-word}
@@ -125,21 +107,21 @@ nav .badge{background:var(--falta);color:#2A0B06;border-radius:999px;padding:0 6
 #flash.rep{background:#6B4A0A;color:#FFF4DF}
 #flash.err{background:#6E241C;color:#FFECE9}
 
-/* ---------- hoja de acciones ---------- */
 #hoja{position:fixed;inset:0;z-index:70;display:none;align-items:flex-end;background:rgba(4,8,16,.72)}
 #hoja.on{display:flex}
 .hoja-panel{width:100%;background:var(--panel);border-radius:20px 20px 0 0;
-  border-top:1px solid var(--borde);padding:20px 16px calc(20px + env(safe-area-inset-bottom))}
+  border-top:1px solid var(--borde);padding:20px 16px calc(20px + env(safe-area-inset-bottom));
+  max-height:86dvh;overflow-y:auto}
 .hoja-panel h3{margin:0 0 3px;font-size:22px;font-weight:660;letter-spacing:-.01em}
-.hoja-panel .sub{color:var(--tenue);font-size:13.5px;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.hoja-panel .sub{color:var(--tenue);font-size:13.5px;margin-bottom:16px}
+#hojaNombre{width:100%;background:var(--noche);border:1px solid var(--borde);border-radius:var(--r);
+  color:var(--texto);padding:15px 16px;font-size:19px;font-weight:600;margin-bottom:4px}
 
-/* ---------- config ---------- */
 .campo{margin-bottom:18px}
 .campo label{display:block;font-size:14px;color:var(--tenue);margin-bottom:7px}
-.campo input,.campo textarea,.campo select{
-  width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
-  color:var(--texto);padding:13px 15px;font-size:15.5px;font-family:inherit}
-.campo textarea{min-height:120px;resize:vertical;font-size:14px}
+.campo input,.campo textarea,.campo select{width:100%;background:var(--panel);border:1px solid var(--borde);
+  border-radius:var(--r);color:var(--texto);padding:13px 15px;font-size:15.5px;font-family:inherit}
+.campo textarea{min-height:110px;resize:vertical;font-size:14px}
 .ayuda{font-size:12.5px;color:var(--tenue);margin-top:7px;line-height:1.5}
 .ayuda code{background:var(--panel-alto);padding:1px 5px;border-radius:5px;font-size:12px}
 h2.sec{font-size:13px;color:var(--vela);font-weight:650;margin:26px 0 14px;
@@ -162,7 +144,7 @@ h2.sec:first-child{margin-top:0}
     <div class="manual">
       <label for="codigo">O cargá el código de 4 letras de la pulsera</label>
       <div class="fila-cod">
-        <input id="codigo" maxlength="4" placeholder="Ej: HYTV" autocomplete="off"
+        <input id="codigo" maxlength="4" placeholder="Ej: CKU4" autocomplete="off"
                autocapitalize="characters" spellcheck="false" inputmode="text">
         <button class="btn primario" id="btnCodigo">Marcar</button>
       </div>
@@ -175,11 +157,12 @@ h2.sec:first-child{margin-top:0}
       <div class="tarjeta paso"><div class="n" id="cPasaron">0</div><div class="t">ya pasaron</div></div>
       <div class="tarjeta"><div class="n" id="cRetirados">0</div><div class="t">en el micro</div></div>
     </div>
+    <div class="entregadas" id="cEntregadas"></div>
     <div id="listaFaltan"></div>
   </section>
 
   <section class="vista" id="v-todos">
-    <input class="buscador" id="buscar" placeholder="Buscar por nombre o código" autocomplete="off">
+    <input class="buscador" id="buscar" placeholder="Buscar por nombre, código o número" autocomplete="off">
     <div id="listaTodos"></div>
   </section>
 
@@ -195,34 +178,35 @@ h2.sec:first-child{margin-top:0}
       <div class="ayuda">Queda guardado en cada registro para saber quién marcó qué.</div>
     </div>
 
-    <h2 class="sec">Peregrinos</h2>
-    <div class="campo">
-      <label for="inpNombres">Un nombre por línea, en orden</label>
-      <textarea id="inpNombres" spellcheck="false"></textarea>
-      <div class="ayuda">Los códigos de pulsera se mantienen fijos por posición: la línea 1 es siempre
-        <code>P01</code>. Si cambiás el orden después de imprimir, las pulseras dejan de coincidir.</div>
-    </div>
-    <button class="btn ancho" id="btnNombres">Guardar la lista</button>
-
     <h2 class="sec">Sincronización entre puestos</h2>
     <div class="campo">
       <label for="inpGrupo">Nombre del grupo</label>
-      <input id="inpGrupo" placeholder="peregrinacion-2026" autocomplete="off">
-      <div class="ayuda">Todos los teléfonos tienen que usar exactamente el mismo nombre.</div>
+      <input id="inpGrupo" placeholder="lujan-2026-a7x" autocomplete="off">
+      <div class="ayuda">Todos los teléfonos tienen que usar exactamente el mismo. Elegí algo que no
+        se adivine: es lo único que separa estos datos de los de cualquiera que abra la app.</div>
     </div>
     <div class="campo">
       <label for="inpFb">Configuración de Firebase</label>
       <textarea id="inpFb" spellcheck="false" placeholder='{"apiKey":"...","projectId":"...","appId":"..."}'></textarea>
-      <div class="ayuda">Pegá el objeto <code>firebaseConfig</code> de la consola de Firebase.
-        Sin esto la app igual funciona, pero cada teléfono queda aislado.</div>
+      <div class="ayuda">Pegá el objeto <code>firebaseConfig</code> de la consola, con o sin el
+        <code>const firebaseConfig =</code> adelante. Sin esto la app funciona igual, pero cada
+        teléfono queda aislado.</div>
     </div>
     <button class="btn primario ancho" id="btnFb">Guardar y conectar</button>
 
+    <h2 class="sec">Cargar nombres por adelantado</h2>
+    <div class="campo">
+      <label for="inpNombres">Un nombre por línea: la línea 1 va a la pulsera 001</label>
+      <textarea id="inpNombres" spellcheck="false" placeholder="Ana Gómez&#10;Juan Pérez&#10;..."></textarea>
+      <div class="ayuda">Opcional. Las que no cargues acá se asignan escaneándolas en la salida.</div>
+    </div>
+    <button class="btn ancho" id="btnNombres">Asignar estos nombres</button>
+
     <h2 class="sec">Datos</h2>
     <button class="btn ancho" id="btnCsv">Descargar los registros en CSV</button>
-    <button class="btn ancho" id="btnReset">Borrar todos los registros</button>
-    <div class="ayuda" style="margin-top:12px">Borrar solo limpia este teléfono. Si hay sincronización
-      activa, los registros vuelven a bajar del servidor.</div>
+    <button class="btn ancho" id="btnReset">Borrar todo en este teléfono</button>
+    <div class="ayuda" style="margin-top:12px">Si la sincronización está activa, los datos vuelven
+      a bajar del servidor apenas haya señal.</div>
   </section>
 </main>
 
@@ -237,12 +221,13 @@ h2.sec:first-child{margin-top:0}
 <div id="hoja"><div class="hoja-panel">
   <h3 id="hojaNom"></h3>
   <div class="sub" id="hojaSub"></div>
+  <div id="hojaCampo"></div>
   <div id="hojaBotones"></div>
   <button class="btn ancho" id="hojaCerrar">Cancelar</button>
 </div></div>
 
 <script type="module">
-/* ═══════════════ datos base ═══════════════ */
+/* ═══════════════ catálogo fijo de pulseras ═══════════════ */
 const PARADAS = [
   {id:0, nombre:"Morón",     sub:"Salida"},
   {id:1, nombre:"La Reja",   sub:"Primera parada"},
@@ -250,76 +235,87 @@ const PARADAS = [
   {id:3, nombre:"Luján",     sub:"Llegada"},
 ];
 
-const PERSONAS_DEFAULT = [
-  {id:"P01",nombre:"Peregrino 01",codigo:"HYTV"}, {id:"P02",nombre:"Peregrino 02",codigo:"G3H3"}, {id:"P03",nombre:"Peregrino 03",codigo:"JPV4"},
-  {id:"P04",nombre:"Peregrino 04",codigo:"4AX4"}, {id:"P05",nombre:"Peregrino 05",codigo:"GMJX"}, {id:"P06",nombre:"Peregrino 06",codigo:"D7U3"},
-  {id:"P07",nombre:"Peregrino 07",codigo:"UH9R"}, {id:"P08",nombre:"Peregrino 08",codigo:"TFTM"}, {id:"P09",nombre:"Peregrino 09",codigo:"RP3N"},
-  {id:"P10",nombre:"Peregrino 10",codigo:"7KAU"}, {id:"P11",nombre:"Peregrino 11",codigo:"N4FL"}, {id:"P12",nombre:"Peregrino 12",codigo:"M4FD"},
-  {id:"P13",nombre:"Peregrino 13",codigo:"JTU7"}, {id:"P14",nombre:"Peregrino 14",codigo:"CXQL"}, {id:"P15",nombre:"Peregrino 15",codigo:"PTQH"},
-  {id:"P16",nombre:"Peregrino 16",codigo:"LD9G"}, {id:"P17",nombre:"Peregrino 17",codigo:"LHVV"}, {id:"P18",nombre:"Peregrino 18",codigo:"MVCF"},
-  {id:"P19",nombre:"Peregrino 19",codigo:"D3EQ"}, {id:"P20",nombre:"Peregrino 20",codigo:"YJ43"}, {id:"P21",nombre:"Peregrino 21",codigo:"V4GY"},
-  {id:"P22",nombre:"Peregrino 22",codigo:"EWRK"}, {id:"P23",nombre:"Peregrino 23",codigo:"CYYC"}, {id:"P24",nombre:"Peregrino 24",codigo:"VCQK"},
-  {id:"P25",nombre:"Peregrino 25",codigo:"7EAV"}, {id:"P26",nombre:"Peregrino 26",codigo:"QPGK"}, {id:"P27",nombre:"Peregrino 27",codigo:"9NK3"},
-  {id:"P28",nombre:"Peregrino 28",codigo:"TLWH"}, {id:"P29",nombre:"Peregrino 29",codigo:"VUW3"}, {id:"P30",nombre:"Peregrino 30",codigo:"NAUH"},
-  {id:"P31",nombre:"Peregrino 31",codigo:"WRHY"}, {id:"P32",nombre:"Peregrino 32",codigo:"HM93"}, {id:"P33",nombre:"Peregrino 33",codigo:"EENK"},
-  {id:"P34",nombre:"Peregrino 34",codigo:"VNG9"}, {id:"P35",nombre:"Peregrino 35",codigo:"PKXA"}, {id:"P36",nombre:"Peregrino 36",codigo:"GGEH"},
-  {id:"P37",nombre:"Peregrino 37",codigo:"NA4R"}, {id:"P38",nombre:"Peregrino 38",codigo:"MU4D"}, {id:"P39",nombre:"Peregrino 39",codigo:"JWVU"},
-  {id:"P40",nombre:"Peregrino 40",codigo:"UUPQ"}, {id:"P41",nombre:"Peregrino 41",codigo:"JEFH"}, {id:"P42",nombre:"Peregrino 42",codigo:"WKMA"},
-  {id:"P43",nombre:"Peregrino 43",codigo:"TX7U"}, {id:"P44",nombre:"Peregrino 44",codigo:"NPQN"}, {id:"P45",nombre:"Peregrino 45",codigo:"KV3H"},
-  {id:"P46",nombre:"Peregrino 46",codigo:"FNN4"}, {id:"P47",nombre:"Peregrino 47",codigo:"T3HJ"}, {id:"P48",nombre:"Peregrino 48",codigo:"DMXR"},
-  {id:"P49",nombre:"Peregrino 49",codigo:"U3CK"}, {id:"P50",nombre:"Peregrino 50",codigo:"9RXW"}, {id:"P51",nombre:"Peregrino 51",codigo:"Q34E"},
-  {id:"P52",nombre:"Peregrino 52",codigo:"7JKU"}, {id:"P53",nombre:"Peregrino 53",codigo:"AV4D"}, {id:"P54",nombre:"Peregrino 54",codigo:"RDAJ"},
-  {id:"P55",nombre:"Peregrino 55",codigo:"QPFR"}, {id:"P56",nombre:"Peregrino 56",codigo:"AUFP"}, {id:"P57",nombre:"Peregrino 57",codigo:"WVVP"},
-  {id:"P58",nombre:"Peregrino 58",codigo:"YGQW"}, {id:"P59",nombre:"Peregrino 59",codigo:"LT39"}, {id:"P60",nombre:"Peregrino 60",codigo:"PE3F"},
+const CODIGOS = [
+  "CKU4","MWFX","4UPL","YXRG","V3M7","9TLM","DKR3","JPWJ","JMUN","R9MA",
+  "AL4X","EL7A","N79Y","GWYR","UCUY","H4QY","KTXP","PUAG","CET7","VARL",
+  "RPHX","V7H7","D3RT","7947","3FJG","VJRX","DFAU","GQXG","RCXR","M39N",
+  "YN3J","FPQD","JCUJ","L9HW","3YMH","9JTL","VWHG","F9XM","NVDK","9FQV",
+  "DX4E","Q3H3","UH4J","AEYJ","KAXP","CM9J","NUVR","WPKJ","A4PT","7GYJ",
+  "PMWL","HJ4J","RV9N","39RC","JTJR","C3DK","MA7Q","P3DW","ANR3","79NM",
+  "GLYH","EFHN","EJ9G","TQC9","DGRV","R9RY","NTME","HVHF","GDVP","RCTP",
+  "URY3","MR9U","AEXA","DVHV","EJVJ","VWQ4","UAFM","FPD9","UKAY","K9XL",
+  "MFKY","N73H","XRF9","D4VH","W4CE","G4R3","VPWA","FGVY","VCQL","KFCP",
+  "CYJR","RMQH","VLTM","KAWL","RW3P","QHF3","PDU9","FNA7","W7KF","WMAJ",
+  "3943","ADRE","9K3N","3ERA","MPHF","QHEU","D7PQ","D4Q3","P4NH","C7WG",
+  "MLFN","XGYV","RXA7","DKHM","AC7H",
 ];
 
-/* ═══════════════ almacenamiento local ═══════════════ */
-const K = {
-  parada:"per.parada", operador:"per.operador", eventos:"per.eventos",
-  pend:"per.pendientes", fb:"per.fb", grupo:"per.grupo", personas:"per.personas",
-};
-const leer  = (k,d) => { try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch{ return d; } };
-const grabar= (k,v) => { try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ console.warn("localStorage lleno",e); } };
+// La pulsera es un identificador anónimo. El nombre se le asigna al entregarla.
+const CATALOGO = CODIGOS.map((codigo, i) => ({ id:`P${String(i+1).padStart(3,"0")}`, codigo, n:i+1 }));
+const PORID  = new Map(CATALOGO.map(p => [p.id, p]));
+const PORCOD = new Map(CATALOGO.map(p => [p.codigo, p]));
 
-let PERSONAS  = leer(K.personas, null) || PERSONAS_DEFAULT;
+/* ═══════════════ estado ═══════════════ */
+const K = { parada:"per.parada", operador:"per.operador", eventos:"per.eventos",
+            registro:"per.registro", pend:"per.pend", fb:"per.fb", grupo:"per.grupo" };
+const leer   = (k,d) => { try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch{return d;} };
+const grabar = (k,v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ console.warn("localStorage",e); } };
+
 let paradaAct = leer(K.parada, null);
 let operador  = leer(K.operador, "");
-let grupo     = leer(K.grupo, "peregrinacion-2026");
+let grupo     = leer(K.grupo, "lujan-2026");
 
-const eventos    = new Map(Object.entries(leer(K.eventos, {})));
-const pendientes = new Set(leer(K.pend, []));
+const eventos    = new Map(Object.entries(leer(K.eventos, {})));   // `${id}_${parada}` → evento
+const registro   = new Map(Object.entries(leer(K.registro, {})));  // id → {id,nombre,activo,ts,operador}
+const pendientes = new Set(leer(K.pend, []));                      // "e:<clave>" | "p:<id>"
 let ultimaSync   = 0;
 
-const guardarEventos = () => {
+const persistir = () => {
   grabar(K.eventos, Object.fromEntries(eventos));
+  grabar(K.registro, Object.fromEntries(registro));
   grabar(K.pend, [...pendientes]);
 };
 
-const porId     = () => new Map(PERSONAS.map(p=>[p.id,p]));
-const buscarTok = tok => PERSONAS.find(p => p.id===tok || p.codigo===tok);
-const estadoEn  = (pid,par) => eventos.get(`${pid}_${par}`)?.estado ?? null;
+const estadoEn  = (id,par) => eventos.get(`${id}_${par}`)?.estado ?? null;
+const entregada = id => registro.get(id)?.activo === true;
+const tieneNom  = id => Boolean(registro.get(id)?.nombre?.trim());
+const nombreDe  = id => registro.get(id)?.nombre?.trim() || `Pulsera ${PORID.get(id)?.n ?? "?"}`;
+const activos   = () => CATALOGO.filter(p => entregada(p.id));
 
-/* ═══════════════ escritura: local primero, red después ═══════════════ */
-function marcar(personaId, parada, estado){
-  const id = `${personaId}_${parada}`;                 // determinístico → idempotente
-  const prev = eventos.get(id);
+/* ═══════════════ escrituras: local primero ═══════════════ */
+function marcar(id, parada, estado){
+  const clave = `${id}_${parada}`;                      // determinístico → idempotente
+  const prev = eventos.get(clave);
   if (prev && prev.estado === estado) return "repetido";
-  eventos.set(id, {id, personaId, parada, estado, ts:Date.now(), operador:operador||"sin-nombre"});
-  pendientes.add(id);
-  guardarEventos();
-  pintar();
-  flush();                                             // sin await: la UI no espera a la red
+  eventos.set(clave, {id:clave, personaId:id, parada, estado, ts:Date.now(), operador:operador||"sin-nombre"});
+  pendientes.add("e:" + clave);
+  persistir(); pintar(); flush();
   return prev ? "cambiado" : "nuevo";
 }
 
-function borrarMarca(personaId, parada){
-  const id = `${personaId}_${parada}`;
-  if (!eventos.has(id)) return;
-  eventos.set(id, {...eventos.get(id), estado:"anulado", ts:Date.now(), operador:operador||"sin-nombre"});
-  pendientes.add(id);
-  guardarEventos();
-  pintar();
-  flush();
+function entregar(id, nombre){
+  const nom = (nombre || "").trim();
+  const prev = registro.get(id);
+  if (prev && prev.activo && prev.nombre === nom) return;
+  registro.set(id, {id, nombre:nom, activo:true, ts:Date.now(),
+                    operador:operador||"sin-nombre", n:PORID.get(id)?.n});
+  pendientes.add("p:" + id);
+  persistir(); pintar(); flush();
+}
+
+function devolver(id){                                   // pulsera que al final no se entregó
+  registro.set(id, {...(registro.get(id)||{}), id, activo:false, ts:Date.now(),
+                    operador:operador||"sin-nombre", n:PORID.get(id)?.n});
+  pendientes.add("p:" + id);
+  persistir(); pintar(); flush();
+}
+
+function borrarMarca(id, parada){
+  const clave = `${id}_${parada}`;
+  if (!eventos.has(clave)) return;
+  eventos.set(clave, {...eventos.get(clave), estado:"anulado", ts:Date.now(), operador:operador||"sin-nombre"});
+  pendientes.add("e:" + clave);
+  persistir(); pintar(); flush();
 }
 
 /* ═══════════════ Firestore ═══════════════ */
@@ -331,49 +327,51 @@ async function conectar(){
   conectando = true;
   try{
     const {initializeApp} = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-    const fs = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const fs  = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
     const app = initializeApp(cfg);
     const db  = fs.getFirestore(app);
-    const col = fs.collection(db, "grupos", grupo, "eventos");
-    fbApi = {fs, db, col};
+    fbApi = { fs,
+      colEv:  fs.collection(db, "grupos", grupo, "eventos"),
+      colPer: fs.collection(db, "grupos", grupo, "personas") };
 
-    fs.onSnapshot(col, snap => {                       // lectura en vivo
+    const escuchar = (col, mapa, prefijo) => fs.onSnapshot(col, snap => {
       let cambio = false;
       snap.forEach(d => {
-        const rem = d.data(), loc = eventos.get(rem.id);
-        if (!loc || (rem.ts > loc.ts && !pendientes.has(rem.id))) { eventos.set(rem.id, rem); cambio = true; }
+        const rem = d.data(), loc = mapa.get(rem.id);
+        // lo pendiente local gana: todavía no llegó al servidor
+        if (!loc || (rem.ts > loc.ts && !pendientes.has(prefijo + rem.id))){ mapa.set(rem.id, rem); cambio = true; }
       });
       ultimaSync = Date.now();
-      if (cambio) guardarEventos();
+      if (cambio) persistir();
       pintar();
     }, err => { console.warn("snapshot", err); fbApi = null; pintar(); });
 
+    escuchar(fbApi.colEv,  eventos,  "e:");
+    escuchar(fbApi.colPer, registro, "p:");
     flush();
-  }catch(e){
-    console.warn("no se pudo conectar", e);
-    fbApi = null;
-  }finally{ conectando = false; }
+  }catch(e){ console.warn("conexión", e); fbApi = null; }
+  finally{ conectando = false; }
 }
 
-const conTimeout = (p, ms) => Promise.race([p, new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")), ms))]);
+const conTimeout = (p,ms) => Promise.race([p, new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")),ms))]);
 
 let vaciando = false;
 async function flush(){
   if (vaciando || !fbApi || !navigator.onLine || pendientes.size === 0) return;
   vaciando = true;
   try{
-    for (const id of [...pendientes]){
-      const ev = eventos.get(id);
-      if (!ev) { pendientes.delete(id); continue; }
-      await conTimeout(fbApi.fs.setDoc(fbApi.fs.doc(fbApi.col, id), ev), 8000);
-      pendientes.delete(id);
-      guardarEventos();
-      pintar();
+    for (const clave of [...pendientes]){
+      const tipo = clave[0], id = clave.slice(2);
+      const col  = tipo === "e" ? fbApi.colEv : fbApi.colPer;
+      const dato = tipo === "e" ? eventos.get(id) : registro.get(id);
+      if (!dato){ pendientes.delete(clave); continue; }
+      await conTimeout(fbApi.fs.setDoc(fbApi.fs.doc(col, id), dato), 8000);
+      pendientes.delete(clave);
+      persistir(); pintar();
     }
     ultimaSync = Date.now();
-  }catch(e){
-    /* queda pendiente, se reintenta solo */
-  }finally{ vaciando = false; pintar(); }
+  }catch(e){ /* queda pendiente, se reintenta solo */ }
+  finally{ vaciando = false; pintar(); }
 }
 
 setInterval(flush, 10000);
@@ -391,11 +389,9 @@ function beep(hz, ms){
     o.frequency.value = hz; o.type = "sine";
     g.gain.setValueAtTime(.16, audio.currentTime);
     g.gain.exponentialRampToValueAtTime(.001, audio.currentTime + ms/1000);
-    o.connect(g); g.connect(audio.destination);
-    o.start(); o.stop(audio.currentTime + ms/1000);
+    o.connect(g); g.connect(audio.destination); o.start(); o.stop(audio.currentTime + ms/1000);
   }catch{}
 }
-
 const $flash = document.getElementById("flash");
 let flashTimer = null;
 function flash(tipo, glifo, nombre, sub){
@@ -403,43 +399,46 @@ function flash(tipo, glifo, nombre, sub){
   $flash.querySelector(".g").textContent = glifo;
   $flash.querySelector(".nombre").textContent = nombre;
   $flash.querySelector(".sub").textContent = sub;
-  if (tipo === "ok")  { beep(920, 130); navigator.vibrate?.(60); }
-  if (tipo === "rep") { beep(560, 180); navigator.vibrate?.([40,60,40]); }
-  if (tipo === "err") { beep(200, 340); navigator.vibrate?.([90,70,90]); }
+  if (tipo === "ok"){ beep(920,130); navigator.vibrate?.(60); }
+  if (tipo === "rep"){ beep(560,180); navigator.vibrate?.([40,60,40]); }
+  if (tipo === "err"){ beep(200,340); navigator.vibrate?.([90,70,90]); }
   clearTimeout(flashTimer);
   flashTimer = setTimeout(() => { $flash.className = ""; }, tipo === "err" ? 2200 : 1350);
 }
 $flash.addEventListener("click", () => { clearTimeout(flashTimer); $flash.className = ""; });
 
-/* ═══════════════ procesar un escaneo ═══════════════ */
+/* ═══════════════ procesar escaneo ═══════════════ */
 let ultimoTok = "", ultimoTokTs = 0;
 
 function procesar(bruto, desdeCamara){
   if (paradaAct === null){ irA("config"); return; }
+  if ($hoja.className === "on") return;                  // no interrumpir una asignación en curso
+
   let tok = String(bruto).trim();
   if (tok.includes("#")) tok = tok.split("#").pop();
   else if (tok.includes("/")) tok = tok.split("/").pop();
-  tok = tok.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  tok = tok.toUpperCase().replace(/[^A-Z0-9]/g,"");
   if (!tok) return;
 
   const ahora = Date.now();
-  if (desdeCamara && tok === ultimoTok && ahora - ultimoTokTs < 3000) return;  // anti-rebote
+  if (desdeCamara && tok === ultimoTok && ahora - ultimoTokTs < 3000) return;
   ultimoTok = tok; ultimoTokTs = ahora;
 
-  const p = buscarTok(tok);
-  if (!p){ flash("err","✕","Pulsera desconocida", tok + " no está en la lista"); return; }
+  const p = PORID.get(tok) || PORCOD.get(tok);
+  if (!p){ flash("err","✕","Pulsera desconocida", tok + " no está en el catálogo"); return; }
 
-  const yaEstaba = estadoEn(p.id, paradaAct);
+  // Pulsera sin entregar: la asignación es el check-in.
+  if (!entregada(p.id)){ abrirEntrega(p); return; }
+
   const par = PARADAS[paradaAct].nombre;
-
-  if (yaEstaba === "paso"){
+  if (estadoEn(p.id, paradaAct) === "paso"){
     const h = new Date(eventos.get(`${p.id}_${paradaAct}`).ts)
       .toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
-    flash("rep","↻", p.nombre, `Ya estaba registrado en ${par} a las ${h}`);
+    flash("rep","↻", nombreDe(p.id), `Ya estaba registrado en ${par} a las ${h}`);
     return;
   }
   marcar(p.id, paradaAct, "paso");
-  flash("ok","✓", p.nombre, `Llegó a ${par}`);
+  flash("ok","✓", nombreDe(p.id), `Llegó a ${par}`);
 }
 
 /* ═══════════════ cámara ═══════════════ */
@@ -451,17 +450,13 @@ async function alternarCam(){
   try{
     $avisoCam.style.display = "none";
     escaner = escaner || new Html5Qrcode("lector", {verbose:false});
-    await escaner.start(
-      {facingMode:"environment"},
+    await escaner.start({facingMode:"environment"},
       {fps:10, qrbox:{width:250,height:250}, aspectRatio:1.0},
-      txt => procesar(txt, true),
-      () => {}
-    );
-    camOn = true; $btnCam.textContent = "Apagar cámara";
-    beep(700, 80);
+      txt => procesar(txt, true), () => {});
+    camOn = true; $btnCam.textContent = "Apagar cámara"; beep(700,80);
   }catch(e){
     $avisoCam.style.display = "";
-    $avisoCam.textContent = "No se pudo abrir la cámara. Revisá el permiso en el navegador y que la página esté en HTTPS. Mientras tanto usá el código de 4 letras.";
+    $avisoCam.textContent = "No se pudo abrir la cámara. Revisá el permiso del navegador y que la página esté en HTTPS. Mientras tanto usá el código de 4 letras.";
   }
 }
 async function apagarCam(){
@@ -472,106 +467,175 @@ async function apagarCam(){
 }
 $btnCam.addEventListener("click", alternarCam);
 
-/* ═══════════════ hoja de acciones ═══════════════ */
+/* ═══════════════ hojas de acción ═══════════════ */
 const $hoja = document.getElementById("hoja");
-function abrirHoja(p){
-  document.getElementById("hojaNom").textContent = p.nombre;
-  const est = estadoEn(p.id, paradaAct);
-  const hist = PARADAS.map(pa => {
-    const e = estadoEn(p.id, pa.id);
-    if (e === "paso")     return `${pa.nombre}: ${new Date(eventos.get(`${p.id}_${pa.id}`).ts).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})}`;
-    if (e === "retirado") return `${pa.nombre}: se subió al micro`;
-    return null;
-  }).filter(Boolean).join(" · ");
-  document.getElementById("hojaSub").textContent = `${p.codigo} · ${p.id}` + (hist ? " — " + hist : " — sin registros");
+const cerrarHoja = () => { $hoja.className = ""; document.getElementById("hojaCampo").innerHTML = ""; };
+document.getElementById("hojaCerrar").addEventListener("click", cerrarHoja);
+$hoja.addEventListener("click", e => { if (e.target === $hoja) cerrarHoja(); });
 
-  const cont = document.getElementById("hojaBotones");
-  cont.innerHTML = "";
-  const bt = (txt, clase, fn) => {
+function botonesHoja(defs){
+  const c = document.getElementById("hojaBotones");
+  c.innerHTML = "";
+  for (const [txt, clase, fn] of defs){
     const b = document.createElement("button");
     b.className = "btn ancho " + clase; b.textContent = txt;
-    b.addEventListener("click", () => { fn(); $hoja.className = ""; });
-    cont.appendChild(b);
+    b.addEventListener("click", () => { fn(); cerrarHoja(); });
+    c.appendChild(b);
+  }
+}
+function campoNombre(valor){
+  const c = document.getElementById("hojaCampo");
+  c.innerHTML = `<input id="hojaNombre" placeholder="Nombre y apellido" autocomplete="off" autocapitalize="words" spellcheck="false">`;
+  const $in = document.getElementById("hojaNombre");
+  $in.value = valor || "";
+  return $in;
+}
+
+// Entrega: asignar el nombre y registrar el paso en un solo gesto.
+function abrirEntrega(p){
+  document.getElementById("hojaNom").textContent = `Pulsera ${p.n}`;
+  document.getElementById("hojaSub").textContent =
+    `${p.codigo} · sin entregar. Escribí de quién es y queda registrada en ${PARADAS[paradaAct].nombre}.`;
+  const $in = campoNombre("");
+  const confirmar = () => {
+    entregar(p.id, $in.value);
+    marcar(p.id, paradaAct, "paso");
+    const nom = nombreDe(p.id);
+    cerrarHoja();
+    flash("ok","✓", nom, `Pulsera ${p.n} entregada · ${PARADAS[paradaAct].nombre}`);
   };
+  $in.addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); confirmar(); } });
+  botonesHoja([
+    ["Entregar y registrar", "primario", confirmar],
+    ["Entregar sin nombre",  "", () => {
+       entregar(p.id, ""); marcar(p.id, paradaAct, "paso");
+       flash("ok","✓", `Pulsera ${p.n}`, `Entregada · ${PARADAS[paradaAct].nombre}`); }],
+  ]);
+  $hoja.className = "on";
+  setTimeout(() => $in.focus(), 120);
+}
+
+// Pulsera ya entregada: acciones sobre la parada actual.
+function abrirAcciones(p){
+  if (!entregada(p.id)){ abrirEntrega(p); return; }
+  document.getElementById("hojaNom").textContent = nombreDe(p.id);
+  const hist = PARADAS.map(pa => {
+    const e = estadoEn(p.id, pa.id);
+    if (e === "paso")     return `${pa.nombre} ${new Date(eventos.get(`${p.id}_${pa.id}`).ts).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})}`;
+    if (e === "retirado") return `${pa.nombre}: micro`;
+    return null;
+  }).filter(Boolean).join(" · ");
+  document.getElementById("hojaSub").textContent =
+    `Pulsera ${p.n} · ${p.codigo}` + (hist ? " — " + hist : " — sin registros");
+
+  const $in = campoNombre(registro.get(p.id)?.nombre || "");
+  const est = estadoEn(p.id, paradaAct);
   const par = PARADAS[paradaAct].nombre;
-  if (est !== "paso")     bt(`Llegó a ${par}`, "primario", () => { marcar(p.id, paradaAct, "paso"); flash("ok","✓",p.nombre,`Llegó a ${par}`); });
-  if (est !== "retirado") bt("Se subió al micro", "", () => { marcar(p.id, paradaAct, "retirado"); flash("rep","⊘",p.nombre,"Anotado: viaja en el micro"); });
-  if (est)                bt("Deshacer esta marca", "", () => borrarMarca(p.id, paradaAct));
+  const defs = [];
+  if (est !== "paso")
+    defs.push([`Llegó a ${par}`, "primario", () => { entregar(p.id,$in.value); marcar(p.id,paradaAct,"paso"); flash("ok","✓",nombreDe(p.id),`Llegó a ${par}`); }]);
+  if (est !== "retirado")
+    defs.push(["Se subió al micro", "", () => { entregar(p.id,$in.value); marcar(p.id,paradaAct,"retirado"); flash("rep","⊘",nombreDe(p.id),"Anotado: viaja en el micro"); }]);
+  defs.push(["Guardar solo el nombre", "", () => entregar(p.id, $in.value)]);
+  if (est) defs.push(["Deshacer esta marca", "", () => borrarMarca(p.id, paradaAct)]);
+  defs.push(["Marcar como no entregada", "", () => { if (confirm(`La pulsera ${p.n} deja de contar como persona. ¿Seguro?`)) devolver(p.id); }]);
+  botonesHoja(defs);
   $hoja.className = "on";
 }
-document.getElementById("hojaCerrar").addEventListener("click", () => $hoja.className = "");
-$hoja.addEventListener("click", e => { if (e.target === $hoja) $hoja.className = ""; });
 
 /* ═══════════════ render ═══════════════ */
 function filaPersona(p){
-  const est = estadoEn(p.id, paradaAct);
+  const dada = entregada(p.id);
+  const est  = dada ? estadoEn(p.id, paradaAct) : null;
   const b = document.createElement("button");
-  b.className = "persona " + (est === "paso" ? "esta-paso" : est === "retirado" ? "esta-retirado" : "esta-falta");
+  b.className = "persona " + (!dada ? "sin-entregar"
+    : est === "paso" ? "esta-paso" : est === "retirado" ? "esta-retirado" : "esta-falta");
   const tramos = PARADAS.map(pa => {
-    const e = estadoEn(p.id, pa.id);
+    const e = dada ? estadoEn(p.id, pa.id) : null;
     return `<i class="tramo ${e === "paso" ? "p" : e === "retirado" ? "r" : ""}"></i>`;
   }).join("");
-  let meta = p.codigo;
-  const ev = eventos.get(`${p.id}_${paradaAct}`);
-  if (est === "paso")     meta += " · llegó " + new Date(ev.ts).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
-  if (est === "retirado") meta += " · en el micro";
+  let meta = `${p.n} · ${p.codigo}`;
+  if (!dada) meta += " · sin entregar";
+  else if (est === "paso")     meta += " · llegó " + new Date(eventos.get(`${p.id}_${paradaAct}`).ts).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
+  else if (est === "retirado") meta += " · en el micro";
   b.innerHTML = `<div class="cuerpo"><div class="nom"></div><div class="meta"></div></div><div class="tramos">${tramos}</div>`;
-  b.querySelector(".nom").textContent  = p.nombre;
+  const $n = b.querySelector(".nom");
+  $n.textContent = dada ? nombreDe(p.id) : `Pulsera ${p.n}`;
+  if (!tieneNom(p.id)) $n.classList.add("anon");
   b.querySelector(".meta").textContent = meta;
-  b.addEventListener("click", () => abrirHoja(p));
+  b.addEventListener("click", () => abrirAcciones(p));
   return b;
 }
 
 function pintarSync(){
   const punto = document.getElementById("hPunto"), txt = document.getElementById("hSyncTxt");
   if (!leer(K.fb, null)){ punto.className = "punto"; txt.textContent = "solo este teléfono"; return; }
-  if (pendientes.size > 0){
-    punto.className = "punto espera";
-    txt.textContent = `${pendientes.size} sin subir`;
-    return;
-  }
+  if (pendientes.size > 0){ punto.className = "punto espera"; txt.textContent = `${pendientes.size} sin subir`; return; }
   if (!fbApi || !navigator.onLine){ punto.className = "punto mal"; txt.textContent = "sin conexión"; return; }
-  const s = Math.round((Date.now() - ultimaSync) / 1000);
+  const s = Math.round((Date.now() - ultimaSync)/1000);
   punto.className = "punto " + (s < 90 ? "ok" : "espera");
   txt.textContent = s < 60 ? "al día" : s < 3600 ? `hace ${Math.round(s/60)} min` : `hace ${Math.round(s/3600)} h`;
 }
 
 function pintar(){
   const pa = paradaAct === null ? null : PARADAS[paradaAct];
-  document.getElementById("hParada").textContent  = pa ? pa.nombre : "Elegí tu puesto";
+  document.getElementById("hParada").textContent   = pa ? pa.nombre : "Elegí tu puesto";
   document.getElementById("hOperador").textContent = pa ? pa.sub + (operador ? " · " + operador : "") : "Andá a ajustes";
   pintarSync();
   if (paradaAct === null) return;
 
+  const dadas = activos();
   const faltan = [], pasaron = [], retirados = [];
-  for (const p of PERSONAS){
+  for (const p of dadas){
     const e = estadoEn(p.id, paradaAct);
     (e === "paso" ? pasaron : e === "retirado" ? retirados : faltan).push(p);
   }
   document.getElementById("cFaltan").textContent    = faltan.length;
   document.getElementById("cPasaron").textContent   = pasaron.length;
   document.getElementById("cRetirados").textContent = retirados.length;
+
+  const sinNombre = dadas.filter(p => !tieneNom(p.id)).length;
+  document.getElementById("cEntregadas").innerHTML =
+    `<b>${dadas.length}</b> de ${CATALOGO.length} pulseras entregadas` +
+    (sinNombre ? ` · <b>${sinNombre}</b> sin nombre cargado` : "");
+
   const badge = document.getElementById("navBadge");
   badge.textContent = faltan.length;
   badge.style.display = faltan.length ? "" : "none";
 
   const lf = document.getElementById("listaFaltan");
   lf.innerHTML = "";
-  if (!faltan.length){
+  if (!dadas.length){
+    lf.innerHTML = `<div class="vacio">Todavía no se entregó ninguna pulsera.<br>Escaneá una para asignarla.</div>`;
+  } else if (!faltan.length){
     lf.innerHTML = `<div class="vacio"><b>Llegaron todos</b>No queda nadie por marcar en ${pa.nombre}.</div>`;
   } else {
     for (const p of faltan) lf.appendChild(filaPersona(p));
   }
 
-  const q  = document.getElementById("buscar").value.trim().toUpperCase();
+  const q = document.getElementById("buscar").value.trim().toUpperCase();
+  const coincide = p => !q || nombreDe(p.id).toUpperCase().includes(q) ||
+                        p.codigo.includes(q) || String(p.n) === q || p.id.includes(q);
   const lt = document.getElementById("listaTodos");
   lt.innerHTML = "";
-  const vis = PERSONAS.filter(p => !q || p.nombre.toUpperCase().includes(q) || p.codigo.includes(q) || p.id.includes(q));
-  if (!vis.length) lt.innerHTML = `<div class="vacio">Nadie coincide con «${q}».</div>`;
-  else for (const p of vis) lt.appendChild(filaPersona(p));
+  const dadasVis = dadas.filter(coincide);
+  const libres   = CATALOGO.filter(p => !entregada(p.id) && coincide(p));
+  if (!dadasVis.length && !libres.length){
+    lt.innerHTML = `<div class="vacio">Nada coincide con «${q}».</div>`;
+  } else {
+    for (const p of dadasVis) lt.appendChild(filaPersona(p));
+    if (libres.length){
+      const h = document.createElement("div");
+      h.className = "grupo-tit";
+      h.textContent = `Sin entregar (${libres.length})`;
+      lt.appendChild(h);
+      for (const p of libres) lt.appendChild(filaPersona(p));
+    }
+  }
 }
 
 /* ═══════════════ navegación ═══════════════ */
+const main = document.querySelector("main");
 function irA(v){
   document.querySelectorAll(".vista").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.vista === v));
@@ -580,14 +644,10 @@ function irA(v){
 }
 document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => irA(b.dataset.vista)));
 document.getElementById("btnConfig").addEventListener("click", () => irA("config"));
-const main = document.querySelector("main");
 
 /* ═══════════════ entrada manual ═══════════════ */
 const $cod = document.getElementById("codigo");
-const enviarCodigo = () => {
-  const v = $cod.value.trim();
-  if (v){ procesar(v, false); $cod.value = ""; }
-};
+const enviarCodigo = () => { const v = $cod.value.trim(); if (v){ procesar(v, false); $cod.value = ""; } };
 document.getElementById("btnCodigo").addEventListener("click", enviarCodigo);
 $cod.addEventListener("keydown", e => { if (e.key === "Enter") enviarCodigo(); });
 $cod.addEventListener("input", () => { if ($cod.value.length === 4) enviarCodigo(); });
@@ -607,58 +667,74 @@ const $op = document.getElementById("inpOperador");
 $op.value = operador;
 $op.addEventListener("change", () => { operador = $op.value.trim(); grabar(K.operador, operador); pintar(); });
 
-const $nom = document.getElementById("inpNombres");
-$nom.value = PERSONAS.map(p => p.nombre).join("\n");
 document.getElementById("btnNombres").addEventListener("click", () => {
-  const lineas = $nom.value.split("\n").map(s => s.trim()).filter(Boolean);
-  if (!lineas.length){ alert("La lista quedó vacía."); return; }
-  PERSONAS = lineas.map((n, i) => PERSONAS_DEFAULT[i]
-    ? {...PERSONAS_DEFAULT[i], nombre:n}
-    : {id:`P${String(i+1).padStart(2,"0")}`, nombre:n, codigo:codigoExtra(i)});
-  grabar(K.personas, PERSONAS); pintar();
-  alert(`Guardado: ${PERSONAS.length} peregrinos. Volvé a imprimir las pulseras si cambió el orden.`);
+  const lineas = document.getElementById("inpNombres").value.split("\n").map(s => s.trim());
+  const cargados = lineas.filter(Boolean).length;
+  if (!cargados){ alert("No hay nombres para cargar."); return; }
+  if (lineas.length > CATALOGO.length){ alert(`Hay ${lineas.length} líneas pero solo ${CATALOGO.length} pulseras impresas.`); return; }
+  lineas.forEach((n, i) => { if (n && CATALOGO[i]) entregar(CATALOGO[i].id, n); });
+  alert(`${cargados} pulseras quedaron asignadas. Igual hay que escanearlas en Morón para registrar la salida.`);
 });
-function codigoExtra(i){                                  // determinístico para índices > 60
-  const A = "ACDEFGHJKLMNPQRTUVWXY3479"; let n = (i + 1) * 7919, s = "";
-  for (let k = 0; k < 4; k++){ s += A[n % A.length]; n = Math.floor(n / A.length) + 31 * (k + 1); }
-  return s;
-}
 
 const $grupo = document.getElementById("inpGrupo"); $grupo.value = grupo;
 const $fb = document.getElementById("inpFb");
 const cfgGuardada = leer(K.fb, null);
 if (cfgGuardada) $fb.value = JSON.stringify(cfgGuardada, null, 2);
+
+// Acepta tanto el objeto pelado como el bloque entero copiado de la consola de Firebase,
+// que trae imports y comentarios alrededor.
+function parsearConfig(texto){
+  const limpio = texto.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+  const ancla = limpio.indexOf("firebaseConfig");
+  let a = limpio.indexOf("{", ancla >= 0 ? ancla : 0);
+  if (a < 0) a = limpio.indexOf("{");
+  if (a < 0) throw new Error("no encuentro el objeto entre llaves");
+
+  let prof = 0, b = -1;                                  // llave de cierre que corresponde
+  for (let i = a; i < limpio.length; i++){
+    if (limpio[i] === "{") prof++;
+    else if (limpio[i] === "}" && --prof === 0){ b = i; break; }
+  }
+  if (b < 0) throw new Error("falta la llave de cierre");
+
+  return JSON.parse(
+    limpio.slice(a, b + 1)
+      .replace(/([{,]\s*)([A-Za-z_$][\w$]*)\s*:/g, '$1"$2":')   // claves sin comillas
+      .replace(/'/g, '"')
+      .replace(/,(\s*[}\]])/g, "$1")                            // coma colgante
+  );
+}
+
 document.getElementById("btnFb").addEventListener("click", () => {
-  grupo = ($grupo.value.trim() || "peregrinacion-2026"); grabar(K.grupo, grupo);
+  grupo = $grupo.value.trim() || "lujan-2026"; grabar(K.grupo, grupo);
   const t = $fb.value.trim();
   if (!t){ localStorage.removeItem(K.fb); fbApi = null; pintar(); alert("Sincronización desactivada."); return; }
   try{
-    const cfg = JSON.parse(t.replace(/^\s*(const|let|var)\s+\w+\s*=\s*/, "").replace(/;\s*$/, ""));
+    const cfg = parsearConfig(t);
     if (!cfg.projectId || !cfg.apiKey) throw new Error("faltan apiKey o projectId");
     grabar(K.fb, cfg); fbApi = null; conectar();
-    alert("Guardado. Mirá el indicador de arriba a la derecha: cuando diga «al día» está conectado.");
+    alert("Guardado. Mirá el indicador de arriba: cuando diga «al día» está conectado.");
   }catch(e){ alert("Ese texto no es una configuración válida: " + e.message); }
 });
 
 document.getElementById("btnCsv").addEventListener("click", () => {
-  const m = porId();
-  const filas = [["persona_id","nombre","codigo","parada","lugar","estado","hora","operador"]];
+  const filas = [["pulsera","codigo","nombre","parada","lugar","estado","hora","operador"]];
   for (const ev of [...eventos.values()].sort((a,b) => a.ts - b.ts)){
-    const p = m.get(ev.personaId);
-    filas.push([ev.personaId, p?.nombre ?? "?", p?.codigo ?? "?", ev.parada,
+    const p = PORID.get(ev.personaId);
+    filas.push([p?.n ?? "?", p?.codigo ?? "?", nombreDe(ev.personaId), ev.parada,
                 PARADAS[ev.parada]?.nombre ?? "?", ev.estado,
                 new Date(ev.ts).toLocaleString("es-AR"), ev.operador]);
   }
   const csv = filas.map(f => f.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob(["\uFEFF" + csv], {type:"text/csv;charset=utf-8"}));
+  a.href = URL.createObjectURL(new Blob(["\uFEFF"+csv], {type:"text/csv;charset=utf-8"}));
   a.download = `peregrinacion-${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 });
 
 document.getElementById("btnReset").addEventListener("click", () => {
-  if (!confirm("Se borran todos los registros de este teléfono. ¿Seguro?")) return;
-  eventos.clear(); pendientes.clear(); guardarEventos(); pintar();
+  if (!confirm("Se borran los registros y las asignaciones de este teléfono. ¿Seguro?")) return;
+  eventos.clear(); registro.clear(); pendientes.clear(); persistir(); pintar();
 });
 
 /* ═══════════════ arranque ═══════════════ */
@@ -668,7 +744,6 @@ if (location.hash.length > 1){
   setTimeout(() => procesar(t, false), 400);
 }
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
-
 irA(paradaAct === null ? "config" : "escanear");
 pintar();
 conectar();

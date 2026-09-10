@@ -10,21 +10,20 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--noche);color:var(--texto);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5}
-.panel{max-width:760px;margin:0 auto;padding:28px 20px 40px}
+.panel{max-width:760px;margin:0 auto;padding:28px 20px 44px}
 h1{font-size:27px;font-weight:660;letter-spacing:-.02em;margin:0 0 6px}
-.intro{color:var(--tenue);font-size:15px;margin:0 0 26px;max-width:62ch}
+.intro{color:var(--tenue);font-size:15px;margin:0 0 26px;max-width:64ch}
 label{display:block;font-size:14px;color:var(--tenue);margin:0 0 7px}
-input,textarea{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:12px;
+input{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:12px;
   color:var(--texto);padding:13px 15px;font-size:15px;font-family:inherit;margin-bottom:18px}
-textarea{min-height:150px;resize:vertical;font-size:13.5px}
+.par{display:flex;gap:14px}.par>div{flex:1}
 button{background:var(--vela);color:#241704;border:none;border-radius:12px;
   padding:15px 26px;font-size:16px;font-weight:640;cursor:pointer;font-family:inherit}
-.nota{color:var(--tenue);font-size:13px;margin-top:20px;max-width:62ch}
-.nota code{background:var(--panel);padding:1px 5px;border-radius:5px}
-
+.nota{color:var(--tenue);font-size:13px;margin-top:22px;max-width:64ch}
+.nota strong{color:var(--texto);font-weight:620}
+#estado{margin-top:14px;font-size:14px;color:var(--vela);min-height:20px}
 #hojas{display:none}
 
-/* ── impresión ── */
 @media print{
   body{background:#fff;color:#000}
   .panel{display:none}
@@ -32,90 +31,96 @@ button{background:var(--vela);color:#241704;border:none;border-radius:12px;
   @page{size:A4 portrait;margin:9mm}
 }
 .pulsera{
-  display:flex;align-items:center;gap:5mm;
-  height:24mm;padding:0 4mm;border:.35mm dashed #999;border-radius:1.5mm;
-  margin-bottom:1.6mm;background:#fff;color:#000;break-inside:avoid;page-break-inside:avoid;
+  display:flex;align-items:center;gap:4mm;
+  height:24mm;padding:0 3.5mm;border:.35mm dashed #999;border-radius:1.5mm;
+  margin-bottom:1.5mm;background:#fff;color:#000;break-inside:avoid;page-break-inside:avoid;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
 .pulsera img{width:19mm;height:19mm;display:block;flex:0 0 auto}
-.bloque{flex:1;min-width:0;display:flex;align-items:baseline;gap:3.5mm}
-.bloque .nombre{font-size:13pt;font-weight:700;letter-spacing:-.01em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bloque .cod{font-size:15pt;font-weight:800;letter-spacing:.14em;flex:0 0 auto;
-  font-variant-numeric:tabular-nums}
-.bloque .idp{font-size:7.5pt;color:#666;flex:0 0 auto}
-.cierre{writing-mode:vertical-rl;font-size:6.5pt;color:#888;letter-spacing:.1em;flex:0 0 auto}
+.num{font-size:21pt;font-weight:800;letter-spacing:-.02em;flex:0 0 auto;
+  font-variant-numeric:tabular-nums;line-height:1}
+.cod{font-size:13pt;font-weight:750;letter-spacing:.16em;flex:0 0 auto;font-variant-numeric:tabular-nums}
+.renglon{flex:1;min-width:0;border-bottom:.4mm solid #000;height:9mm;position:relative}
+.renglon::after{content:"nombre";position:absolute;left:0;bottom:.6mm;
+  font-size:5.5pt;color:#B0B0B0;letter-spacing:.06em}
+.cierre{writing-mode:vertical-rl;font-size:6pt;color:#8A8A8A;letter-spacing:.1em;flex:0 0 auto}
 </style>
 </head>
 <body>
 
 <div class="panel">
   <h1>Pulseras para imprimir</h1>
-  <p class="intro">Cada tira lleva dos QR, uno en cada punta: como la pulsera gira en la muñeca,
-  siempre queda uno a la vista. Al lado va el nombre y el código de cuatro letras para tipear
-  a mano cuando el papel esté arrugado o mojado.</p>
+  <p class="intro">Las 115 pulseras salen numeradas y en blanco. El nombre se escribe con marcador
+  al entregarla, y en la app se carga escaneándola. Cada tira lleva dos QR, uno en cada punta:
+  como la pulsera gira en la muñeca, siempre queda uno a la vista.</p>
 
   <label for="base">Dirección de la app</label>
   <input id="base" value="https://tu-usuario.github.io/peregrinacion/">
 
-  <label for="nombres">Nombres, uno por línea y en el mismo orden que cargaste en la app</label>
-  <textarea id="nombres" spellcheck="false"></textarea>
+  <div class="par">
+    <div><label for="desde">Desde el número</label><input id="desde" type="number" value="1" min="1" max="115"></div>
+    <div><label for="hasta">Hasta el número</label><input id="hasta" type="number" value="115" min="1" max="115"></div>
+  </div>
 
   <button id="btn">Generar e imprimir</button>
+  <div id="estado"></div>
 
-  <p class="nota">Imprimí en papel de 120 g o más y cortá por la línea de puntos.
-  Para cerrar la pulsera va bien cinta de embalar transparente sobre las dos puntas: aguanta
-  la lluvia y no se despega con la transpiración. Hacé una de prueba y escaneala de noche con la
-  linterna antes de imprimir las sesenta.</p>
+  <p class="nota">Imprimí en papel de 120 g o más y cortá por la línea de puntos. Para cerrarla va
+  bien cinta de embalar transparente sobre las dos puntas: aguanta la lluvia y no se despega con
+  la transpiración.<br><br>
+  <strong>Antes de tirar las 115:</strong> imprimí una sola, cerrala en una muñeca, arrugala un poco
+  y escaneala de noche con la linterna del celular. Si esa anda, andan todas.</p>
 </div>
 
 <div id="hojas"></div>
 
 <script>
-const A = "ACDEFGHJKLMNPQRTUVWXY3479";
-const CODIGOS = ["HYTV","G3H3","JPV4","4AX4","GMJX","D7U3","UH9R","TFTM","RP3N","7KAU",
-"N4FL","M4FD","JTU7","CXQL","PTQH","LD9G","LHVV","MVCF","D3EQ","YJ43",
-"V4GY","EWRK","CYYC","VCQK","7EAV","QPGK","9NK3","TLWH","VUW3","NAUH",
-"WRHY","HM93","EENK","VNG9","PKXA","GGEH","NA4R","MU4D","JWVU","UUPQ",
-"JEFH","WKMA","TX7U","NPQN","KV3H","FNN4","T3HJ","DMXR","U3CK","9RXW",
-"Q34E","7JKU","AV4D","RDAJ","QPFR","AUFP","WVVP","YGQW","LT39","PE3F"];
+const CODIGOS = [
+  "CKU4","MWFX","4UPL","YXRG","V3M7","9TLM","DKR3","JPWJ","JMUN","R9MA",
+  "AL4X","EL7A","N79Y","GWYR","UCUY","H4QY","KTXP","PUAG","CET7","VARL",
+  "RPHX","V7H7","D3RT","7947","3FJG","VJRX","DFAU","GQXG","RCXR","M39N",
+  "YN3J","FPQD","JCUJ","L9HW","3YMH","9JTL","VWHG","F9XM","NVDK","9FQV",
+  "DX4E","Q3H3","UH4J","AEYJ","KAXP","CM9J","NUVR","WPKJ","A4PT","7GYJ",
+  "PMWL","HJ4J","RV9N","39RC","JTJR","C3DK","MA7Q","P3DW","ANR3","79NM",
+  "GLYH","EFHN","EJ9G","TQC9","DGRV","R9RY","NTME","HVHF","GDVP","RCTP",
+  "URY3","MR9U","AEXA","DVHV","EJVJ","VWQ4","UAFM","FPD9","UKAY","K9XL",
+  "MFKY","N73H","XRF9","D4VH","W4CE","G4R3","VPWA","FGVY","VCQL","KFCP",
+  "CYJR","RMQH","VLTM","KAWL","RW3P","QHF3","PDU9","FNA7","W7KF","WMAJ",
+  "3943","ADRE","9K3N","3ERA","MPHF","QHEU","D7PQ","D4Q3","P4NH","C7WG",
+  "MLFN","XGYV","RXA7","DKHM","AC7H",
+];
 
-function codigoExtra(i){                       // mismo algoritmo que la app, para índices > 60
-  let n = (i+1)*7919, s = "";
-  for (let k=0;k<4;k++){ s += A[n % A.length]; n = Math.floor(n/A.length) + 31*(k+1); }
-  return s;
-}
-
-document.getElementById("nombres").value =
-  Array.from({length:60}, (_,i) => `Peregrino ${String(i+1).padStart(2,"0")}`).join("\n");
+const $estado = document.getElementById("estado");
 
 document.getElementById("btn").addEventListener("click", async () => {
   const base = document.getElementById("base").value.trim().replace(/#.*$/, "").replace(/\/?$/, "/");
-  const nombres = document.getElementById("nombres").value.split("\n").map(s => s.trim()).filter(Boolean);
-  if (!nombres.length){ alert("Cargá al menos un nombre."); return; }
+  if (!/^https?:\/\//.test(base)){ $estado.textContent = "La dirección tiene que empezar con https://"; return; }
+
+  let desde = Math.max(1, parseInt(document.getElementById("desde").value, 10) || 1);
+  let hasta = Math.min(CODIGOS.length, parseInt(document.getElementById("hasta").value, 10) || CODIGOS.length);
+  if (hasta < desde){ $estado.textContent = "El rango está al revés."; return; }
 
   const cont = document.getElementById("hojas");
   cont.innerHTML = "";
+  $estado.textContent = "Generando los QR…";
 
-  for (let i = 0; i < nombres.length; i++){
-    const id = `P${String(i+1).padStart(2,"0")}`;
-    const cod = CODIGOS[i] || codigoExtra(i);
-    const url = `${base}#${id}`;
-    const png = await QRCode.toDataURL(url, {margin:0, width:320, errorCorrectionLevel:"M"});
+  for (let n = desde; n <= hasta; n++){
+    const id  = `P${String(n).padStart(3,"0")}`;
+    const cod = CODIGOS[n-1];
+    const png = await QRCode.toDataURL(`${base}#${id}`, {margin:0, width:320, errorCorrectionLevel:"M"});
 
     const tira = document.createElement("div");
     tira.className = "pulsera";
     tira.innerHTML =
-      `<img alt="">` +
-      `<div class="bloque"><span class="nombre"></span><span class="cod"></span><span class="idp">${id}</span></div>` +
-      `<div class="cierre">PEREGRINACIÓN A LUJÁN</div>` +
-      `<img alt="">`;
+      `<img alt=""><span class="num">${n}</span><span class="cod">${cod}</span>` +
+      `<div class="renglon"></div>` +
+      `<div class="cierre">PEREGRINACIÓN A LUJÁN</div><img alt="">`;
     tira.querySelectorAll("img").forEach(im => im.src = png);
-    tira.querySelector(".nombre").textContent = nombres[i];
-    tira.querySelector(".cod").textContent = cod;
     cont.appendChild(tira);
   }
-  setTimeout(() => print(), 350);
+
+  $estado.textContent = `${hasta - desde + 1} pulseras listas. Abriendo el diálogo de impresión…`;
+  setTimeout(() => print(), 400);
 });
 </script>
 </body>
