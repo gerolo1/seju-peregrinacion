@@ -178,21 +178,10 @@ h2.sec:first-child{margin-top:0}
       <div class="ayuda">Queda guardado en cada registro para saber quién marcó qué.</div>
     </div>
 
-    <h2 class="sec">Sincronización entre puestos</h2>
-    <div class="campo">
-      <label for="inpGrupo">Nombre del grupo</label>
-      <input id="inpGrupo" placeholder="lujan-2026-a7x" autocomplete="off">
-      <div class="ayuda">Todos los teléfonos tienen que usar exactamente el mismo. Elegí algo que no
-        se adivine: es lo único que separa estos datos de los de cualquiera que abra la app.</div>
-    </div>
-    <div class="campo">
-      <label for="inpFb">Configuración de Firebase</label>
-      <textarea id="inpFb" spellcheck="false" placeholder='{"apiKey":"...","projectId":"...","appId":"..."}'></textarea>
-      <div class="ayuda">Pegá el objeto <code>firebaseConfig</code> de la consola, con o sin el
-        <code>const firebaseConfig =</code> adelante. Sin esto la app funciona igual, pero cada
-        teléfono queda aislado.</div>
-    </div>
-    <button class="btn primario ancho" id="btnFb">Guardar y conectar</button>
+    <h2 class="sec">Sincronización</h2>
+    <div class="entregadas" id="estadoSync">Conectando…</div>
+    <div class="ayuda">Ya viene configurada. Todos los puestos comparten los datos automáticamente
+      apenas haya señal; sin señal la app sigue funcionando y sube lo pendiente después.</div>
 
     <h2 class="sec">Cargar nombres por adelantado</h2>
     <div class="campo">
@@ -230,6 +219,20 @@ h2.sec:first-child{margin-top:0}
 </div></div>
 
 <script type="module">
+/* ═══════════════ configuración fija ═══════════════ */
+// La apiKey de Firebase web no es un secreto: va en el cliente por diseño y cualquiera que use
+// la app la ve. Lo que protege los datos son las reglas de Firestore y el nombre del grupo.
+// Por eso está acá adentro y nadie tiene que pegar nada en su teléfono.
+const FIREBASE = {
+  apiKey: "AIzaSyAk6ju3fcwkOg9XI90gy5zOD55i4elDKCs",
+  authDomain: "seju-peregrinacion.firebaseapp.com",
+  projectId: "seju-peregrinacion",
+  storageBucket: "seju-peregrinacion.firebasestorage.app",
+  messagingSenderId: "60600180005",
+  appId: "1:60600180005:web:dcd1c4f9a26a16b31b4ecc",
+};
+const GRUPO = "lujan-2026-mbmjj9";
+
 /* ═══════════════ catálogo fijo de pulseras ═══════════════ */
 const PARADAS = [
   {id:0, nombre:"Morón",     sub:"Salida"},
@@ -260,13 +263,12 @@ const PORCOD = new Map(CATALOGO.map(p => [p.codigo, p]));
 
 /* ═══════════════ estado ═══════════════ */
 const K = { parada:"per.parada", operador:"per.operador", eventos:"per.eventos",
-            registro:"per.registro", pend:"per.pend", fb:"per.fb", grupo:"per.grupo" };
+            registro:"per.registro", pend:"per.pend" };
 const leer   = (k,d) => { try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch{return d;} };
 const grabar = (k,v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ console.warn("localStorage",e); } };
 
 let paradaAct = leer(K.parada, null);
 let operador  = leer(K.operador, "");
-let grupo     = leer(K.grupo, "lujan-2026");
 
 const eventos    = new Map(Object.entries(leer(K.eventos, {})));   // `${id}_${parada}` → evento
 const registro   = new Map(Object.entries(leer(K.registro, {})));  // id → {id,nombre,activo,ts,operador}
@@ -325,17 +327,16 @@ function borrarMarca(id, parada){
 let fbApi = null, conectando = false;
 
 async function conectar(){
-  const cfg = leer(K.fb, null);
-  if (!cfg || conectando) return;
+  if (conectando) return;
   conectando = true;
   try{
     const {initializeApp} = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
     const fs  = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-    const app = initializeApp(cfg);
+    const app = initializeApp(FIREBASE);
     const db  = fs.getFirestore(app);
     fbApi = { fs,
-      colEv:  fs.collection(db, "grupos", grupo, "eventos"),
-      colPer: fs.collection(db, "grupos", grupo, "personas") };
+      colEv:  fs.collection(db, "grupos", GRUPO, "eventos"),
+      colPer: fs.collection(db, "grupos", GRUPO, "personas") };
 
     const escuchar = (col, mapa, prefijo) => fs.onSnapshot(col, snap => {
       let cambio = false;
@@ -572,7 +573,6 @@ function filaPersona(p){
 
 function pintarSync(){
   const punto = document.getElementById("hPunto"), txt = document.getElementById("hSyncTxt");
-  if (!leer(K.fb, null)){ punto.className = "punto"; txt.textContent = "solo este teléfono"; return; }
   if (pendientes.size > 0){ punto.className = "punto espera"; txt.textContent = `${pendientes.size} sin subir`; return; }
   if (!fbApi || !navigator.onLine){ punto.className = "punto mal"; txt.textContent = "sin conexión"; return; }
   const s = Math.round((Date.now() - ultimaSync)/1000);
@@ -585,6 +585,10 @@ function pintar(){
   document.getElementById("hParada").textContent   = pa ? pa.nombre : "Elegí tu puesto";
   document.getElementById("hOperador").textContent = pa ? pa.sub + (operador ? " · " + operador : "") : "Andá a ajustes";
   pintarSync();
+  const $es = document.getElementById("estadoSync");
+  if ($es) $es.innerHTML = fbApi
+    ? `Conectada al grupo <b>${GRUPO}</b>` + (pendientes.size ? ` · <b>${pendientes.size}</b> registros esperando señal` : " · todo subido")
+    : (navigator.onLine ? "Conectando…" : `Sin señal · <b>${pendientes.size}</b> registros guardados en este teléfono`);
   if (paradaAct === null) return;
 
   const dadas = activos();
@@ -679,47 +683,6 @@ document.getElementById("btnNombres").addEventListener("click", () => {
   alert(`${cargados} pulseras quedaron asignadas. Igual hay que escanearlas en Morón para registrar la salida.`);
 });
 
-const $grupo = document.getElementById("inpGrupo"); $grupo.value = grupo;
-const $fb = document.getElementById("inpFb");
-const cfgGuardada = leer(K.fb, null);
-if (cfgGuardada) $fb.value = JSON.stringify(cfgGuardada, null, 2);
-
-// Acepta tanto el objeto pelado como el bloque entero copiado de la consola de Firebase,
-// que trae imports y comentarios alrededor.
-function parsearConfig(texto){
-  const limpio = texto.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
-  const ancla = limpio.indexOf("firebaseConfig");
-  let a = limpio.indexOf("{", ancla >= 0 ? ancla : 0);
-  if (a < 0) a = limpio.indexOf("{");
-  if (a < 0) throw new Error("no encuentro el objeto entre llaves");
-
-  let prof = 0, b = -1;                                  // llave de cierre que corresponde
-  for (let i = a; i < limpio.length; i++){
-    if (limpio[i] === "{") prof++;
-    else if (limpio[i] === "}" && --prof === 0){ b = i; break; }
-  }
-  if (b < 0) throw new Error("falta la llave de cierre");
-
-  return JSON.parse(
-    limpio.slice(a, b + 1)
-      .replace(/([{,]\s*)([A-Za-z_$][\w$]*)\s*:/g, '$1"$2":')   // claves sin comillas
-      .replace(/'/g, '"')
-      .replace(/,(\s*[}\]])/g, "$1")                            // coma colgante
-  );
-}
-
-document.getElementById("btnFb").addEventListener("click", () => {
-  grupo = $grupo.value.trim() || "lujan-2026"; grabar(K.grupo, grupo);
-  const t = $fb.value.trim();
-  if (!t){ localStorage.removeItem(K.fb); fbApi = null; pintar(); alert("Sincronización desactivada."); return; }
-  try{
-    const cfg = parsearConfig(t);
-    if (!cfg.projectId || !cfg.apiKey) throw new Error("faltan apiKey o projectId");
-    grabar(K.fb, cfg); fbApi = null; conectar();
-    alert("Guardado. Mirá el indicador de arriba: cuando diga «al día» está conectado.");
-  }catch(e){ alert("Ese texto no es una configuración válida: " + e.message); }
-});
-
 document.getElementById("btnCsv").addEventListener("click", () => {
   const filas = [["pulsera","codigo","nombre","parada","lugar","estado","hora","operador"]];
   for (const ev of [...eventos.values()].sort((a,b) => a.ts - b.ts)){
@@ -741,10 +704,23 @@ document.getElementById("btnReset").addEventListener("click", () => {
 });
 
 /* ═══════════════ arranque ═══════════════ */
+// Cada puesto recibe su propio link: .../?p=1&op=Marce — así nadie tiene que tocar ajustes.
+const qs = new URLSearchParams(location.search);
+if (qs.has("p")){
+  const n = Number(qs.get("p"));
+  if (Number.isInteger(n) && PARADAS[n]){ paradaAct = n; grabar(K.parada, n); $sel.value = String(n); }
+}
+if (qs.has("op")){
+  operador = qs.get("op").trim().slice(0, 40);
+  grabar(K.operador, operador); $op.value = operador;
+}
+
 if (location.hash.length > 1){
   const t = location.hash.slice(1);
   history.replaceState(null, "", location.pathname);
   setTimeout(() => procesar(t, false), 400);
+} else if (location.search){
+  history.replaceState(null, "", location.pathname);
 }
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 irA(paradaAct === null ? "config" : "escanear");
