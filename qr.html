@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Imprimir pulseras</title>
+<title>Imprimir QR</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
 :root{--noche:#0B1220;--panel:#141F33;--borde:#283A57;--texto:#EAF1FA;--tenue:#8CA2C0;
@@ -11,13 +11,13 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--noche);color:var(--texto);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5}
-.panel{max-width:780px;margin:0 auto;padding:28px 20px 44px}
+.panel{max-width:780px;margin:0 auto;padding:28px 20px 40px}
 h1{font-size:27px;font-weight:660;letter-spacing:-.02em;margin:0 0 6px}
 .intro{color:var(--tenue);font-size:15px;margin:0 0 26px;max-width:64ch}
 label{display:block;font-size:14px;color:var(--tenue);margin:0 0 7px}
 input{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:12px;
   color:var(--texto);padding:13px 15px;font-size:15px;font-family:inherit;margin-bottom:18px}
-.par{display:flex;gap:14px}.par>div{flex:1}
+.par{display:flex;gap:14px;flex-wrap:wrap}.par>div{flex:1;min-width:120px}
 .acciones{display:flex;gap:10px;flex-wrap:wrap}
 button{background:var(--panel);border:1px solid var(--borde);border-radius:12px;color:var(--texto);
   padding:15px 24px;font-size:16px;font-weight:620;cursor:pointer;font-family:inherit}
@@ -27,48 +27,48 @@ button:disabled{opacity:.45;cursor:default}
 .nota strong{color:var(--texto);font-weight:620}
 #estado{margin:16px 0 0;font-size:14.5px;min-height:22px}
 #estado.error{color:var(--falta)} #estado.listo{color:var(--paso)}
-.previa-tit{font-size:13px;color:var(--vela);font-weight:650;margin:30px 0 14px;
+.previa-tit{font-size:13px;color:var(--vela);font-weight:650;margin:30px 0 0;
   padding-bottom:8px;border-bottom:1px solid var(--borde)}
+
+/* ── grilla de QR ── */
+#hojas{max-width:780px;margin:0 auto;padding:16px 20px 40px}
+.grilla{display:grid;gap:0;background:#fff;padding:2mm;border-radius:6px}
+.celda{
+  border:.3mm dashed #B0B0B0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:1.6mm 0 1mm;background:#fff;color:#000;
+  break-inside:avoid;page-break-inside:avoid;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.celda img{display:block;image-rendering:pixelated}
+.etiqueta{margin-top:.8mm;font-size:6.5pt;font-weight:700;letter-spacing:.05em;
+  font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap}
+.etiqueta .n{font-size:8.5pt;font-weight:800;margin-right:.7mm}
 
 @media print{
   body{background:#fff;color:#000}
   .panel{display:none}
-  #hojas{display:block}
-  @page{size:A4 portrait;margin:9mm}
+  #hojas{max-width:none;margin:0;padding:0}
+  .grilla{padding:0;border-radius:0}
+  @page{size:A4 portrait;margin:8mm}
 }
-#hojas{max-width:780px;margin:0 auto;padding:0 20px 40px}
-@media print{ #hojas{max-width:none;margin:0;padding:0} }
-
-.pulsera{
-  display:flex;align-items:center;gap:4mm;
-  height:24mm;padding:0 3.5mm;border:.35mm dashed #999;border-radius:1.5mm;
-  margin-bottom:1.5mm;background:#fff;color:#000;break-inside:avoid;page-break-inside:avoid;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-}
-.pulsera img{width:19mm;height:19mm;display:block;flex:0 0 auto;image-rendering:pixelated}
-.num{font-size:21pt;font-weight:800;letter-spacing:-.02em;flex:0 0 auto;
-  font-variant-numeric:tabular-nums;line-height:1}
-.cod{font-size:13pt;font-weight:750;letter-spacing:.16em;flex:0 0 auto;font-variant-numeric:tabular-nums}
-.renglon{flex:1;min-width:0;border-bottom:.4mm solid #000;height:9mm;position:relative}
-.renglon::after{content:"nombre";position:absolute;left:0;bottom:.6mm;
-  font-size:5.5pt;color:#B0B0B0;letter-spacing:.06em}
-.cierre{writing-mode:vertical-rl;font-size:6pt;color:#8A8A8A;letter-spacing:.1em;flex:0 0 auto}
 </style>
 </head>
 <body>
 
 <div class="panel">
-  <h1>Pulseras para imprimir</h1>
-  <p class="intro">Las 115 pulseras salen numeradas y en blanco. El nombre se escribe con marcador
-  al entregarla, y en la app se carga escaneándola. Cada tira lleva dos QR, uno en cada punta:
-  como la pulsera gira en la muñeca, siempre queda uno a la vista.</p>
+  <h1>QR para recortar</h1>
+  <p class="intro">Cuadraditos con el QR, el número de pulsera y el código de cuatro letras.
+  Se recortan y se pegan sobre la pulsera. El número y el código van impresos abajo de cada QR
+  porque si no son 115 cuadrados idénticos y no hay forma de saber cuál es cuál.</p>
 
   <label for="base">Dirección de la app</label>
-  <input id="base" value="https://tu-usuario.github.io/peregrinacion/">
+  <input id="base" value="https://gerolo1.github.io/seju-peregrinacion/">
 
   <div class="par">
-    <div><label for="desde">Desde el número</label><input id="desde" type="number" value="1" min="1" max="115"></div>
-    <div><label for="hasta">Hasta el número</label><input id="hasta" type="number" value="115" min="1" max="115"></div>
+    <div><label for="desde">Desde</label><input id="desde" type="number" value="1" min="1" max="115"></div>
+    <div><label for="hasta">Hasta</label><input id="hasta" type="number" value="115" min="1" max="115"></div>
+    <div><label for="tam">Lado del QR (mm)</label><input id="tam" type="number" value="18" min="10" max="45"></div>
   </div>
 
   <div class="acciones">
@@ -77,11 +77,13 @@ button:disabled{opacity:.45;cursor:default}
   </div>
   <p id="estado"></p>
 
-  <p class="nota">Imprimí en papel de 120 g o más y cortá por la línea de puntos. Para cerrarla va
-  bien cinta de embalar transparente sobre las dos puntas: aguanta la lluvia y no se despega con
-  la transpiración.<br><br>
-  <strong>Antes de tirar las 115:</strong> imprimí una sola, cerrala en una muñeca, arrugala un
-  poco y escaneala de noche con la linterna del celular. Si esa anda, andan todas.</p>
+  <p class="nota">A 18 mm entran unos 96 por hoja A4, así que las 115 salen en dos hojas.
+  Si el papel de la pulsera es angosto, bajá a 15 mm; para escanear de noche con papel arrugado,
+  18 mm o más anda mejor.<br><br>
+  Pegalos con cinta transparente por encima en vez de con plasticola: además de sujetar,
+  impermeabiliza el QR y evita que la tinta se corra con la transpiración.<br><br>
+  <strong>Antes de imprimir los 115:</strong> imprimí uno, pegalo, arrugalo un poco y escaneálo
+  de noche con la linterna. Si ese anda, andan todos.</p>
 
   <div id="previaTit" class="previa-tit" style="display:none">Vista previa</div>
 </div>
@@ -104,6 +106,7 @@ const CODIGOS = [
   "MLFN","XGYV","RXA7","DKHM","AC7H",
 ];
 
+const ANCHO_UTIL_MM = 194;              // A4 (210) menos 8 mm de margen a cada lado
 const $estado = document.getElementById("estado");
 const $btn    = document.getElementById("btn");
 const $print  = document.getElementById("btnPrint");
@@ -112,7 +115,7 @@ const $tit    = document.getElementById("previaTit");
 
 const decir = (txt, clase) => { $estado.textContent = txt; $estado.className = clase || ""; };
 
-// Si la librería no cargó, decirlo ahora y no cuando se aprieta el botón.
+// Si la librería no cargó, avisar ahora y no al apretar el botón.
 if (typeof qrcode === "undefined"){
   decir("No cargó la librería de QR. Abrí esta página con conexión la primera vez, y revisá que ningún bloqueador esté frenando cdn.jsdelivr.net.", "error");
   $btn.disabled = true;
@@ -126,37 +129,47 @@ function generar(){
   const hasta = Math.min(CODIGOS.length, parseInt(document.getElementById("hasta").value, 10) || CODIGOS.length);
   if (hasta < desde){ decir("El rango está al revés.", "error"); return; }
 
+  const lado = Math.min(45, Math.max(10, parseInt(document.getElementById("tam").value, 10) || 18));
+  const celda = lado + 4;                              // el QR más el aire y la etiqueta
+  const cols  = Math.max(1, Math.floor(ANCHO_UTIL_MM / celda));
+
   $hojas.innerHTML = "";
   $print.disabled = true;
-  decir(`Generando ${hasta - desde + 1} pulseras…`);
+  decir(`Generando ${hasta - desde + 1} códigos…`);
 
   try{
+    const grilla = document.createElement("div");
+    grilla.className = "grilla";
+    grilla.style.gridTemplateColumns = `repeat(${cols}, ${celda}mm)`;
+
     for (let n = desde; n <= hasta; n++){
       const id  = `P${String(n).padStart(3,"0")}`;
       const cod = CODIGOS[n-1];
 
-      const qr = qrcode(0, "M");            // 0 = elige solo el tamaño según el contenido
+      const qr = qrcode(0, "M");          // 0 = elige solo el tamaño según el contenido
       qr.addData(`${base}#${id}`);
       qr.make();
-      const img = qr.createDataURL(8, 2);   // celda de 8px, margen de 2 celdas
 
-      const tira = document.createElement("div");
-      tira.className = "pulsera";
-      tira.innerHTML =
-        `<img alt=""><span class="num">${n}</span><span class="cod">${cod}</span>` +
-        `<div class="renglon"></div>` +
-        `<div class="cierre">PEREGRINACIÓN A LUJÁN</div><img alt="">`;
-      tira.querySelectorAll("img").forEach(im => im.src = img);
-      $hojas.appendChild(tira);
+      const cel = document.createElement("div");
+      cel.className = "celda";
+      cel.style.height = (celda + 2) + "mm";
+      cel.innerHTML =
+        `<img alt="" style="width:${lado}mm;height:${lado}mm">` +
+        `<div class="etiqueta"><span class="n">${n}</span>${cod}</div>`;
+      cel.querySelector("img").src = qr.createDataURL(8, 1);
+      grilla.appendChild(cel);
     }
+    $hojas.appendChild(grilla);
   }catch(e){
     decir("Se cortó la generación: " + (e && e.message ? e.message : e), "error");
     return;
   }
 
+  const total = hasta - desde + 1;
+  const porHoja = cols * Math.floor(281 / (celda + 2));
   $tit.style.display = "";
   $print.disabled = false;
-  decir(`Listas ${hasta - desde + 1} pulseras. Revisá la vista previa acá abajo y después tocá «Imprimir».`, "listo");
+  decir(`Listos ${total} códigos · ${cols} por fila · unos ${porHoja} por hoja (${Math.ceil(total/porHoja)} hojas). Revisá la vista previa y tocá «Imprimir».`, "listo");
 }
 
 $btn.addEventListener("click", generar);
