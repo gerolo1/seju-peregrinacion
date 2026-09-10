@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Imprimir pulseras</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<style>
+:root{--noche:#0B1220;--panel:#141F33;--borde:#283A57;--texto:#EAF1FA;--tenue:#8CA2C0;--vela:#F2A93B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--noche);color:var(--texto);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.panel{max-width:760px;margin:0 auto;padding:28px 20px 40px}
+h1{font-size:27px;font-weight:660;letter-spacing:-.02em;margin:0 0 6px}
+.intro{color:var(--tenue);font-size:15px;margin:0 0 26px;max-width:62ch}
+label{display:block;font-size:14px;color:var(--tenue);margin:0 0 7px}
+input,textarea{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:12px;
+  color:var(--texto);padding:13px 15px;font-size:15px;font-family:inherit;margin-bottom:18px}
+textarea{min-height:150px;resize:vertical;font-size:13.5px}
+button{background:var(--vela);color:#241704;border:none;border-radius:12px;
+  padding:15px 26px;font-size:16px;font-weight:640;cursor:pointer;font-family:inherit}
+.nota{color:var(--tenue);font-size:13px;margin-top:20px;max-width:62ch}
+.nota code{background:var(--panel);padding:1px 5px;border-radius:5px}
+
+#hojas{display:none}
+
+/* ── impresión ── */
+@media print{
+  body{background:#fff;color:#000}
+  .panel{display:none}
+  #hojas{display:block}
+  @page{size:A4 portrait;margin:9mm}
+}
+.pulsera{
+  display:flex;align-items:center;gap:5mm;
+  height:24mm;padding:0 4mm;border:.35mm dashed #999;border-radius:1.5mm;
+  margin-bottom:1.6mm;background:#fff;color:#000;break-inside:avoid;page-break-inside:avoid;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+.pulsera img{width:19mm;height:19mm;display:block;flex:0 0 auto}
+.bloque{flex:1;min-width:0;display:flex;align-items:baseline;gap:3.5mm}
+.bloque .nombre{font-size:13pt;font-weight:700;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bloque .cod{font-size:15pt;font-weight:800;letter-spacing:.14em;flex:0 0 auto;
+  font-variant-numeric:tabular-nums}
+.bloque .idp{font-size:7.5pt;color:#666;flex:0 0 auto}
+.cierre{writing-mode:vertical-rl;font-size:6.5pt;color:#888;letter-spacing:.1em;flex:0 0 auto}
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <h1>Pulseras para imprimir</h1>
+  <p class="intro">Cada tira lleva dos QR, uno en cada punta: como la pulsera gira en la muñeca,
+  siempre queda uno a la vista. Al lado va el nombre y el código de cuatro letras para tipear
+  a mano cuando el papel esté arrugado o mojado.</p>
+
+  <label for="base">Dirección de la app</label>
+  <input id="base" value="https://tu-usuario.github.io/peregrinacion/">
+
+  <label for="nombres">Nombres, uno por línea y en el mismo orden que cargaste en la app</label>
+  <textarea id="nombres" spellcheck="false"></textarea>
+
+  <button id="btn">Generar e imprimir</button>
+
+  <p class="nota">Imprimí en papel de 120 g o más y cortá por la línea de puntos.
+  Para cerrar la pulsera va bien cinta de embalar transparente sobre las dos puntas: aguanta
+  la lluvia y no se despega con la transpiración. Hacé una de prueba y escaneala de noche con la
+  linterna antes de imprimir las sesenta.</p>
+</div>
+
+<div id="hojas"></div>
+
+<script>
+const A = "ACDEFGHJKLMNPQRTUVWXY3479";
+const CODIGOS = ["HYTV","G3H3","JPV4","4AX4","GMJX","D7U3","UH9R","TFTM","RP3N","7KAU",
+"N4FL","M4FD","JTU7","CXQL","PTQH","LD9G","LHVV","MVCF","D3EQ","YJ43",
+"V4GY","EWRK","CYYC","VCQK","7EAV","QPGK","9NK3","TLWH","VUW3","NAUH",
+"WRHY","HM93","EENK","VNG9","PKXA","GGEH","NA4R","MU4D","JWVU","UUPQ",
+"JEFH","WKMA","TX7U","NPQN","KV3H","FNN4","T3HJ","DMXR","U3CK","9RXW",
+"Q34E","7JKU","AV4D","RDAJ","QPFR","AUFP","WVVP","YGQW","LT39","PE3F"];
+
+function codigoExtra(i){                       // mismo algoritmo que la app, para índices > 60
+  let n = (i+1)*7919, s = "";
+  for (let k=0;k<4;k++){ s += A[n % A.length]; n = Math.floor(n/A.length) + 31*(k+1); }
+  return s;
+}
+
+document.getElementById("nombres").value =
+  Array.from({length:60}, (_,i) => `Peregrino ${String(i+1).padStart(2,"0")}`).join("\n");
+
+document.getElementById("btn").addEventListener("click", async () => {
+  const base = document.getElementById("base").value.trim().replace(/#.*$/, "").replace(/\/?$/, "/");
+  const nombres = document.getElementById("nombres").value.split("\n").map(s => s.trim()).filter(Boolean);
+  if (!nombres.length){ alert("Cargá al menos un nombre."); return; }
+
+  const cont = document.getElementById("hojas");
+  cont.innerHTML = "";
+
+  for (let i = 0; i < nombres.length; i++){
+    const id = `P${String(i+1).padStart(2,"0")}`;
+    const cod = CODIGOS[i] || codigoExtra(i);
+    const url = `${base}#${id}`;
+    const png = await QRCode.toDataURL(url, {margin:0, width:320, errorCorrectionLevel:"M"});
+
+    const tira = document.createElement("div");
+    tira.className = "pulsera";
+    tira.innerHTML =
+      `<img alt="">` +
+      `<div class="bloque"><span class="nombre"></span><span class="cod"></span><span class="idp">${id}</span></div>` +
+      `<div class="cierre">PEREGRINACIÓN A LUJÁN</div>` +
+      `<img alt="">`;
+    tira.querySelectorAll("img").forEach(im => im.src = png);
+    tira.querySelector(".nombre").textContent = nombres[i];
+    tira.querySelector(".cod").textContent = cod;
+    cont.appendChild(tira);
+  }
+  setTimeout(() => print(), 350);
+});
+</script>
+</body>
+</html>

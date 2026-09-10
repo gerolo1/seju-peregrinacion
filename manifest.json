@@ -1,0 +1,18 @@
+{
+  "name": "Control de peregrinos",
+  "short_name": "Peregrinos",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B1220",
+  "theme_color": "#0B1220",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%230B1220'/%3E%3Cg fill='none' stroke='%23F2A93B' stroke-width='34' stroke-linecap='round'%3E%3Cpath d='M128 150v212M384 150v212M150 128h212M150 384h212'/%3E%3C/g%3E%3Cpath d='M196 262l40 44 82-96' fill='none' stroke='%233ECF8E' stroke-width='38' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

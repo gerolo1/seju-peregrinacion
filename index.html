@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B1220">
+<title>Control de peregrinos</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+:root{
+  --noche:#0B1220; --panel:#141F33; --panel-alto:#1C2B44; --borde:#283A57;
+  --texto:#EAF1FA; --tenue:#8CA2C0;
+  --vela:#F2A93B; --paso:#3ECF8E; --falta:#FF6F5E; --retirado:#6E86A6;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  background:var(--noche); color:var(--texto);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  font-size:16px; line-height:1.45;
+  display:flex; flex-direction:column; height:100dvh; overflow:hidden;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:3px solid var(--vela); outline-offset:2px}
+
+/* ---------- header ---------- */
+header{
+  flex:0 0 auto; display:flex; align-items:center; gap:12px;
+  padding:12px 16px 10px; border-bottom:1px solid var(--borde); background:var(--panel);
+}
+.parada-actual{flex:1;min-width:0}
+.parada-actual b{display:block;font-size:20px;font-weight:650;letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.parada-actual span{display:block;font-size:12.5px;color:var(--tenue)}
+.sync{
+  flex:0 0 auto; display:flex; align-items:center; gap:7px;
+  font-size:12.5px; color:var(--tenue); background:var(--noche);
+  border:1px solid var(--borde); border-radius:999px; padding:6px 11px 6px 9px;
+}
+.punto{width:9px;height:9px;border-radius:50%;background:var(--retirado);flex:0 0 auto}
+.punto.ok{background:var(--paso)} .punto.mal{background:var(--falta)} .punto.espera{background:var(--vela)}
+.icono-btn{flex:0 0 auto;width:42px;height:42px;border-radius:11px;border:1px solid var(--borde);
+  display:grid;place-items:center;font-size:19px;background:var(--noche)}
+
+/* ---------- main ---------- */
+main{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.vista{display:none;padding:16px} .vista.on{display:block}
+
+/* ---------- escáner ---------- */
+#lector{width:100%;border-radius:var(--r);overflow:hidden;background:#000;min-height:230px}
+#lector video{width:100%!important;display:block}
+.aviso-cam{padding:22px 18px;text-align:center;color:var(--tenue);font-size:14.5px}
+.manual{margin-top:18px}
+.manual label{display:block;font-size:14px;color:var(--tenue);margin-bottom:8px}
+.fila-cod{display:flex;gap:9px}
+#codigo{
+  flex:1;min-width:0;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
+  color:var(--texto);padding:15px 16px;font-size:26px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;text-align:center
+}
+#codigo::placeholder{letter-spacing:.1em;font-weight:400;font-size:17px;color:#54688A}
+.btn{
+  background:var(--panel-alto);border:1px solid var(--borde);border-radius:var(--r);
+  padding:15px 20px;font-weight:600;font-size:16px;min-height:56px
+}
+.btn.primario{background:var(--vela);color:#241704;border-color:var(--vela)}
+.btn.ancho{width:100%;margin-top:12px}
+.btn:active{transform:scale(.985)}
+
+/* ---------- resumen ---------- */
+.resumen{display:flex;gap:10px;margin-bottom:16px}
+.tarjeta{
+  flex:1;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
+  padding:13px 14px;text-align:left
+}
+.tarjeta .n{font-size:34px;font-weight:680;line-height:1;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums}
+.tarjeta .t{font-size:12.5px;color:var(--tenue);margin-top:5px}
+.tarjeta.falta .n{color:var(--falta)} .tarjeta.paso .n{color:var(--paso)}
+
+/* ---------- lista ---------- */
+.buscador{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
+  color:var(--texto);padding:13px 15px;font-size:16px;margin-bottom:12px}
+.persona{
+  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  background:var(--panel);border:1px solid var(--borde);border-left-width:4px;
+  border-radius:var(--r);padding:13px 14px;margin-bottom:8px;min-height:62px
+}
+.persona.esta-paso{border-left-color:var(--paso)}
+.persona.esta-falta{border-left-color:var(--falta)}
+.persona.esta-retirado{border-left-color:var(--retirado);opacity:.62}
+.persona .cuerpo{flex:1;min-width:0}
+.persona .nom{font-size:16.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.persona .meta{font-size:12px;color:var(--tenue);margin-top:3px;font-variant-numeric:tabular-nums}
+.tramos{display:flex;gap:4px;flex:0 0 auto}
+.tramo{width:10px;height:26px;border-radius:3px;background:#243450}
+.tramo.p{background:var(--paso)} .tramo.r{background:var(--retirado)}
+.vacio{text-align:center;color:var(--tenue);padding:44px 20px;font-size:15px}
+.vacio b{display:block;color:var(--paso);font-size:19px;margin-bottom:6px}
+
+/* ---------- nav ---------- */
+nav{
+  flex:0 0 auto;display:flex;border-top:1px solid var(--borde);background:var(--panel)
+}
+nav button{flex:1;padding:11px 4px 13px;color:var(--tenue);font-size:12.5px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;border-top:3px solid transparent}
+nav button .g{font-size:21px;line-height:1}
+nav button.on{color:var(--texto);border-top-color:var(--vela)}
+nav .badge{background:var(--falta);color:#2A0B06;border-radius:999px;padding:0 6px;
+  font-size:11px;font-weight:700;margin-left:4px}
+
+/* ---------- feedback pantalla completa ---------- */
+#flash{
+  position:fixed;inset:0;z-index:60;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center
+}
+#flash.on{display:flex}
+#flash .g{font-size:64px;line-height:1}
+#flash .nombre{font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-.02em;word-break:break-word}
+#flash .sub{font-size:17px;opacity:.85}
+#flash.ok{background:#0E5C3C;color:#EAFFF4}
+#flash.rep{background:#6B4A0A;color:#FFF4DF}
+#flash.err{background:#6E241C;color:#FFECE9}
+
+/* ---------- hoja de acciones ---------- */
+#hoja{position:fixed;inset:0;z-index:70;display:none;align-items:flex-end;background:rgba(4,8,16,.72)}
+#hoja.on{display:flex}
+.hoja-panel{width:100%;background:var(--panel);border-radius:20px 20px 0 0;
+  border-top:1px solid var(--borde);padding:20px 16px calc(20px + env(safe-area-inset-bottom))}
+.hoja-panel h3{margin:0 0 3px;font-size:22px;font-weight:660;letter-spacing:-.01em}
+.hoja-panel .sub{color:var(--tenue);font-size:13.5px;margin-bottom:16px;font-variant-numeric:tabular-nums}
+
+/* ---------- config ---------- */
+.campo{margin-bottom:18px}
+.campo label{display:block;font-size:14px;color:var(--tenue);margin-bottom:7px}
+.campo input,.campo textarea,.campo select{
+  width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:var(--r);
+  color:var(--texto);padding:13px 15px;font-size:15.5px;font-family:inherit}
+.campo textarea{min-height:120px;resize:vertical;font-size:14px}
+.ayuda{font-size:12.5px;color:var(--tenue);margin-top:7px;line-height:1.5}
+.ayuda code{background:var(--panel-alto);padding:1px 5px;border-radius:5px;font-size:12px}
+h2.sec{font-size:13px;color:var(--vela);font-weight:650;margin:26px 0 14px;
+  padding-bottom:8px;border-bottom:1px solid var(--borde)}
+h2.sec:first-child{margin-top:0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="parada-actual"><b id="hParada">—</b><span id="hOperador"></span></div>
+  <div class="sync" id="hSync"><i class="punto" id="hPunto"></i><span id="hSyncTxt">—</span></div>
+  <button class="icono-btn" id="btnConfig" aria-label="Ajustes">⚙</button>
+</header>
+
+<main>
+  <section class="vista" id="v-escanear">
+    <div id="lector"><div class="aviso-cam" id="avisoCam">Tocá «Encender cámara» para empezar a escanear.</div></div>
+    <button class="btn primario ancho" id="btnCam">Encender cámara</button>
+    <div class="manual">
+      <label for="codigo">O cargá el código de 4 letras de la pulsera</label>
+      <div class="fila-cod">
+        <input id="codigo" maxlength="4" placeholder="Ej: HYTV" autocomplete="off"
+               autocapitalize="characters" spellcheck="false" inputmode="text">
+        <button class="btn primario" id="btnCodigo">Marcar</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="vista" id="v-faltan">
+    <div class="resumen">
+      <div class="tarjeta falta"><div class="n" id="cFaltan">0</div><div class="t">faltan llegar</div></div>
+      <div class="tarjeta paso"><div class="n" id="cPasaron">0</div><div class="t">ya pasaron</div></div>
+      <div class="tarjeta"><div class="n" id="cRetirados">0</div><div class="t">en el micro</div></div>
+    </div>
+    <div id="listaFaltan"></div>
+  </section>
+
+  <section class="vista" id="v-todos">
+    <input class="buscador" id="buscar" placeholder="Buscar por nombre o código" autocomplete="off">
+    <div id="listaTodos"></div>
+  </section>
+
+  <section class="vista" id="v-config">
+    <h2 class="sec">Este teléfono</h2>
+    <div class="campo">
+      <label for="selParada">Puesto donde estoy</label>
+      <select id="selParada"></select>
+    </div>
+    <div class="campo">
+      <label for="inpOperador">Quién opera este teléfono</label>
+      <input id="inpOperador" placeholder="Ej: Marce (La Reja)" autocomplete="off">
+      <div class="ayuda">Queda guardado en cada registro para saber quién marcó qué.</div>
+    </div>
+
+    <h2 class="sec">Peregrinos</h2>
+    <div class="campo">
+      <label for="inpNombres">Un nombre por línea, en orden</label>
+      <textarea id="inpNombres" spellcheck="false"></textarea>
+      <div class="ayuda">Los códigos de pulsera se mantienen fijos por posición: la línea 1 es siempre
+        <code>P01</code>. Si cambiás el orden después de imprimir, las pulseras dejan de coincidir.</div>
+    </div>
+    <button class="btn ancho" id="btnNombres">Guardar la lista</button>
+
+    <h2 class="sec">Sincronización entre puestos</h2>
+    <div class="campo">
+      <label for="inpGrupo">Nombre del grupo</label>
+      <input id="inpGrupo" placeholder="peregrinacion-2026" autocomplete="off">
+      <div class="ayuda">Todos los teléfonos tienen que usar exactamente el mismo nombre.</div>
+    </div>
+    <div class="campo">
+      <label for="inpFb">Configuración de Firebase</label>
+      <textarea id="inpFb" spellcheck="false" placeholder='{"apiKey":"...","projectId":"...","appId":"..."}'></textarea>
+      <div class="ayuda">Pegá el objeto <code>firebaseConfig</code> de la consola de Firebase.
+        Sin esto la app igual funciona, pero cada teléfono queda aislado.</div>
+    </div>
+    <button class="btn primario ancho" id="btnFb">Guardar y conectar</button>
+
+    <h2 class="sec">Datos</h2>
+    <button class="btn ancho" id="btnCsv">Descargar los registros en CSV</button>
+    <button class="btn ancho" id="btnReset">Borrar todos los registros</button>
+    <div class="ayuda" style="margin-top:12px">Borrar solo limpia este teléfono. Si hay sincronización
+      activa, los registros vuelven a bajar del servidor.</div>
+  </section>
+</main>
+
+<nav>
+  <button data-vista="escanear" class="on"><span class="g">▣</span>Escanear</button>
+  <button data-vista="faltan"><span class="g">◑</span>Faltan <span class="badge" id="navBadge">0</span></button>
+  <button data-vista="todos"><span class="g">☰</span>Todos</button>
+</nav>
+
+<div id="flash"><div class="g"></div><div class="nombre"></div><div class="sub"></div></div>
+
+<div id="hoja"><div class="hoja-panel">
+  <h3 id="hojaNom"></h3>
+  <div class="sub" id="hojaSub"></div>
+  <div id="hojaBotones"></div>
+  <button class="btn ancho" id="hojaCerrar">Cancelar</button>
+</div></div>
+
+<script type="module">
+/* ═══════════════ datos base ═══════════════ */
+const PARADAS = [
+  {id:0, nombre:"Morón",     sub:"Salida"},
+  {id:1, nombre:"La Reja",   sub:"Primera parada"},
+  {id:2, nombre:"Rodríguez", sub:"Segunda parada"},
+  {id:3, nombre:"Luján",     sub:"Llegada"},
+];
+
+const PERSONAS_DEFAULT = [
+  {id:"P01",nombre:"Peregrino 01",codigo:"HYTV"}, {id:"P02",nombre:"Peregrino 02",codigo:"G3H3"}, {id:"P03",nombre:"Peregrino 03",codigo:"JPV4"},
+  {id:"P04",nombre:"Peregrino 04",codigo:"4AX4"}, {id:"P05",nombre:"Peregrino 05",codigo:"GMJX"}, {id:"P06",nombre:"Peregrino 06",codigo:"D7U3"},
+  {id:"P07",nombre:"Peregrino 07",codigo:"UH9R"}, {id:"P08",nombre:"Peregrino 08",codigo:"TFTM"}, {id:"P09",nombre:"Peregrino 09",codigo:"RP3N"},
+  {id:"P10",nombre:"Peregrino 10",codigo:"7KAU"}, {id:"P11",nombre:"Peregrino 11",codigo:"N4FL"}, {id:"P12",nombre:"Peregrino 12",codigo:"M4FD"},
+  {id:"P13",nombre:"Peregrino 13",codigo:"JTU7"}, {id:"P14",nombre:"Peregrino 14",codigo:"CXQL"}, {id:"P15",nombre:"Peregrino 15",codigo:"PTQH"},
+  {id:"P16",nombre:"Peregrino 16",codigo:"LD9G"}, {id:"P17",nombre:"Peregrino 17",codigo:"LHVV"}, {id:"P18",nombre:"Peregrino 18",codigo:"MVCF"},
+  {id:"P19",nombre:"Peregrino 19",codigo:"D3EQ"}, {id:"P20",nombre:"Peregrino 20",codigo:"YJ43"}, {id:"P21",nombre:"Peregrino 21",codigo:"V4GY"},
+  {id:"P22",nombre:"Peregrino 22",codigo:"EWRK"}, {id:"P23",nombre:"Peregrino 23",codigo:"CYYC"}, {id:"P24",nombre:"Peregrino 24",codigo:"VCQK"},
+  {id:"P25",nombre:"Peregrino 25",codigo:"7EAV"}, {id:"P26",nombre:"Peregrino 26",codigo:"QPGK"}, {id:"P27",nombre:"Peregrino 27",codigo:"9NK3"},
+  {id:"P28",nombre:"Peregrino 28",codigo:"TLWH"}, {id:"P29",nombre:"Peregrino 29",codigo:"VUW3"}, {id:"P30",nombre:"Peregrino 30",codigo:"NAUH"},
+  {id:"P31",nombre:"Peregrino 31",codigo:"WRHY"}, {id:"P32",nombre:"Peregrino 32",codigo:"HM93"}, {id:"P33",nombre:"Peregrino 33",codigo:"EENK"},
+  {id:"P34",nombre:"Peregrino 34",codigo:"VNG9"}, {id:"P35",nombre:"Peregrino 35",codigo:"PKXA"}, {id:"P36",nombre:"Peregrino 36",codigo:"GGEH"},
+  {id:"P37",nombre:"Peregrino 37",codigo:"NA4R"}, {id:"P38",nombre:"Peregrino 38",codigo:"MU4D"}, {id:"P39",nombre:"Peregrino 39",codigo:"JWVU"},
+  {id:"P40",nombre:"Peregrino 40",codigo:"UUPQ"}, {id:"P41",nombre:"Peregrino 41",codigo:"JEFH"}, {id:"P42",nombre:"Peregrino 42",codigo:"WKMA"},
+  {id:"P43",nombre:"Peregrino 43",codigo:"TX7U"}, {id:"P44",nombre:"Peregrino 44",codigo:"NPQN"}, {id:"P45",nombre:"Peregrino 45",codigo:"KV3H"},
+  {id:"P46",nombre:"Peregrino 46",codigo:"FNN4"}, {id:"P47",nombre:"Peregrino 47",codigo:"T3HJ"}, {id:"P48",nombre:"Peregrino 48",codigo:"DMXR"},
+  {id:"P49",nombre:"Peregrino 49",codigo:"U3CK"}, {id:"P50",nombre:"Peregrino 50",codigo:"9RXW"}, {id:"P51",nombre:"Peregrino 51",codigo:"Q34E"},
+  {id:"P52",nombre:"Peregrino 52",codigo:"7JKU"}, {id:"P53",nombre:"Peregrino 53",codigo:"AV4D"}, {id:"P54",nombre:"Peregrino 54",codigo:"RDAJ"},
+  {id:"P55",nombre:"Peregrino 55",codigo:"QPFR"}, {id:"P56",nombre:"Peregrino 56",codigo:"AUFP"}, {id:"P57",nombre:"Peregrino 57",codigo:"WVVP"},
+  {id:"P58",nombre:"Peregrino 58",codigo:"YGQW"}, {id:"P59",nombre:"Peregrino 59",codigo:"LT39"}, {id:"P60",nombre:"Peregrino 60",codigo:"PE3F"},
+];
+
+/* ═══════════════ almacenamiento local ═══════════════ */
+const K = {
+  parada:"per.parada", operador:"per.operador", eventos:"per.eventos",
+  pend:"per.pendientes", fb:"per.fb", grupo:"per.grupo", personas:"per.personas",
+};
+const leer  = (k,d) => { try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch{ return d; } };
+const grabar= (k,v) => { try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ console.warn("localStorage lleno",e); } };
+
+let PERSONAS  = leer(K.personas, null) || PERSONAS_DEFAULT;
+let paradaAct = leer(K.parada, null);
+let operador  = leer(K.operador, "");
+let grupo     = leer(K.grupo, "peregrinacion-2026");
+
+const eventos    = new Map(Object.entries(leer(K.eventos, {})));
+const pendientes = new Set(leer(K.pend, []));
+let ultimaSync   = 0;
+
+const guardarEventos = () => {
+  grabar(K.eventos, Object.fromEntries(eventos));
+  grabar(K.pend, [...pendientes]);
+};
+
+const porId     = () => new Map(PERSONAS.map(p=>[p.id,p]));
+const buscarTok = tok => PERSONAS.find(p => p.id===tok || p.codigo===tok);
+const estadoEn  = (pid,par) => eventos.get(`${pid}_${par}`)?.estado ?? null;
+
+/* ═══════════════ escritura: local primero, red después ═══════════════ */
+function marcar(personaId, parada, estado){
+  const id = `${personaId}_${parada}`;                 // determinístico → idempotente
+  const prev = eventos.get(id);
+  if (prev && prev.estado === estado) return "repetido";
+  eventos.set(id, {id, personaId, parada, estado, ts:Date.now(), operador:operador||"sin-nombre"});
+  pendientes.add(id);
+  guardarEventos();
+  pintar();
+  flush();                                             // sin await: la UI no espera a la red
+  return prev ? "cambiado" : "nuevo";
+}
+
+function borrarMarca(personaId, parada){
+  const id = `${personaId}_${parada}`;
+  if (!eventos.has(id)) return;
+  eventos.set(id, {...eventos.get(id), estado:"anulado", ts:Date.now(), operador:operador||"sin-nombre"});
+  pendientes.add(id);
+  guardarEventos();
+  pintar();
+  flush();
+}
+
+/* ═══════════════ Firestore ═══════════════ */
+let fbApi = null, conectando = false;
+
+async function conectar(){
+  const cfg = leer(K.fb, null);
+  if (!cfg || conectando) return;
+  conectando = true;
+  try{
+    const {initializeApp} = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const fs = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const app = initializeApp(cfg);
+    const db  = fs.getFirestore(app);
+    const col = fs.collection(db, "grupos", grupo, "eventos");
+    fbApi = {fs, db, col};
+
+    fs.onSnapshot(col, snap => {                       // lectura en vivo
+      let cambio = false;
+      snap.forEach(d => {
+        const rem = d.data(), loc = eventos.get(rem.id);
+        if (!loc || (rem.ts > loc.ts && !pendientes.has(rem.id))) { eventos.set(rem.id, rem); cambio = true; }
+      });
+      ultimaSync = Date.now();
+      if (cambio) guardarEventos();
+      pintar();
+    }, err => { console.warn("snapshot", err); fbApi = null; pintar(); });
+
+    flush();
+  }catch(e){
+    console.warn("no se pudo conectar", e);
+    fbApi = null;
+  }finally{ conectando = false; }
+}
+
+const conTimeout = (p, ms) => Promise.race([p, new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")), ms))]);
+
+let vaciando = false;
+async function flush(){
+  if (vaciando || !fbApi || !navigator.onLine || pendientes.size === 0) return;
+  vaciando = true;
+  try{
+    for (const id of [...pendientes]){
+      const ev = eventos.get(id);
+      if (!ev) { pendientes.delete(id); continue; }
+      await conTimeout(fbApi.fs.setDoc(fbApi.fs.doc(fbApi.col, id), ev), 8000);
+      pendientes.delete(id);
+      guardarEventos();
+      pintar();
+    }
+    ultimaSync = Date.now();
+  }catch(e){
+    /* queda pendiente, se reintenta solo */
+  }finally{ vaciando = false; pintar(); }
+}
+
+setInterval(flush, 10000);
+setInterval(pintarSync, 5000);
+addEventListener("online", flush);
+addEventListener("visibilitychange", () => { if (!document.hidden) flush(); });
+
+/* ═══════════════ feedback ═══════════════ */
+let audio = null;
+function beep(hz, ms){
+  try{
+    audio = audio || new (window.AudioContext||window.webkitAudioContext)();
+    if (audio.state === "suspended") audio.resume();
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.frequency.value = hz; o.type = "sine";
+    g.gain.setValueAtTime(.16, audio.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, audio.currentTime + ms/1000);
+    o.connect(g); g.connect(audio.destination);
+    o.start(); o.stop(audio.currentTime + ms/1000);
+  }catch{}
+}
+
+const $flash = document.getElementById("flash");
+let flashTimer = null;
+function flash(tipo, glifo, nombre, sub){
+  $flash.className = "on " + tipo;
+  $flash.querySelector(".g").textContent = glifo;
+  $flash.querySelector(".nombre").textContent = nombre;
+  $flash.querySelector(".sub").textContent = sub;
+  if (tipo === "ok")  { beep(920, 130); navigator.vibrate?.(60); }
+  if (tipo === "rep") { beep(560, 180); navigator.vibrate?.([40,60,40]); }
+  if (tipo === "err") { beep(200, 340); navigator.vibrate?.([90,70,90]); }
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => { $flash.className = ""; }, tipo === "err" ? 2200 : 1350);
+}
+$flash.addEventListener("click", () => { clearTimeout(flashTimer); $flash.className = ""; });
+
+/* ═══════════════ procesar un escaneo ═══════════════ */
+let ultimoTok = "", ultimoTokTs = 0;
+
+function procesar(bruto, desdeCamara){
+  if (paradaAct === null){ irA("config"); return; }
+  let tok = String(bruto).trim();
+  if (tok.includes("#")) tok = tok.split("#").pop();
+  else if (tok.includes("/")) tok = tok.split("/").pop();
+  tok = tok.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (!tok) return;
+
+  const ahora = Date.now();
+  if (desdeCamara && tok === ultimoTok && ahora - ultimoTokTs < 3000) return;  // anti-rebote
+  ultimoTok = tok; ultimoTokTs = ahora;
+
+  const p = buscarTok(tok);
+  if (!p){ flash("err","✕","Pulsera desconocida", tok + " no está en la lista"); return; }
+
+  const yaEstaba = estadoEn(p.id, paradaAct);
+  const par = PARADAS[paradaAct].nombre;
+
+  if (yaEstaba === "paso"){
+    const h = new Date(eventos.get(`${p.id}_${paradaAct}`).ts)
+      .toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
+    flash("rep","↻", p.nombre, `Ya estaba registrado en ${par} a las ${h}`);
+    return;
+  }
+  marcar(p.id, paradaAct, "paso");
+  flash("ok","✓", p.nombre, `Llegó a ${par}`);
+}
+
+/* ═══════════════ cámara ═══════════════ */
+let escaner = null, camOn = false;
+const $btnCam = document.getElementById("btnCam"), $avisoCam = document.getElementById("avisoCam");
+
+async function alternarCam(){
+  if (camOn){ await apagarCam(); return; }
+  try{
+    $avisoCam.style.display = "none";
+    escaner = escaner || new Html5Qrcode("lector", {verbose:false});
+    await escaner.start(
+      {facingMode:"environment"},
+      {fps:10, qrbox:{width:250,height:250}, aspectRatio:1.0},
+      txt => procesar(txt, true),
+      () => {}
+    );
+    camOn = true; $btnCam.textContent = "Apagar cámara";
+    beep(700, 80);
+  }catch(e){
+    $avisoCam.style.display = "";
+    $avisoCam.textContent = "No se pudo abrir la cámara. Revisá el permiso en el navegador y que la página esté en HTTPS. Mientras tanto usá el código de 4 letras.";
+  }
+}
+async function apagarCam(){
+  if (!camOn || !escaner) return;
+  try{ await escaner.stop(); }catch{}
+  camOn = false; $btnCam.textContent = "Encender cámara";
+  $avisoCam.style.display = ""; $avisoCam.textContent = "Cámara apagada.";
+}
+$btnCam.addEventListener("click", alternarCam);
+
+/* ═══════════════ hoja de acciones ═══════════════ */
+const $hoja = document.getElementById("hoja");
+function abrirHoja(p){
+  document.getElementById("hojaNom").textContent = p.nombre;
+  const est = estadoEn(p.id, paradaAct);
+  const hist = PARADAS.map(pa => {
+    const e = estadoEn(p.id, pa.id);
+    if (e === "paso")     return `${pa.nombre}: ${new Date(eventos.get(`${p.id}_${pa.id}`).ts).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})}`;
+    if (e === "retirado") return `${pa.nombre}: se subió al micro`;
+    return null;
+  }).filter(Boolean).join(" · ");
+  document.getElementById("hojaSub").textContent = `${p.codigo} · ${p.id}` + (hist ? " — " + hist : " — sin registros");
+
+  const cont = document.getElementById("hojaBotones");
+  cont.innerHTML = "";
+  const bt = (txt, clase, fn) => {
+    const b = document.createElement("button");
+    b.className = "btn ancho " + clase; b.textContent = txt;
+    b.addEventListener("click", () => { fn(); $hoja.className = ""; });
+    cont.appendChild(b);
+  };
+  const par = PARADAS[paradaAct].nombre;
+  if (est !== "paso")     bt(`Llegó a ${par}`, "primario", () => { marcar(p.id, paradaAct, "paso"); flash("ok","✓",p.nombre,`Llegó a ${par}`); });
+  if (est !== "retirado") bt("Se subió al micro", "", () => { marcar(p.id, paradaAct, "retirado"); flash("rep","⊘",p.nombre,"Anotado: viaja en el micro"); });
+  if (est)                bt("Deshacer esta marca", "", () => borrarMarca(p.id, paradaAct));
+  $hoja.className = "on";
+}
+document.getElementById("hojaCerrar").addEventListener("click", () => $hoja.className = "");
+$hoja.addEventListener("click", e => { if (e.target === $hoja) $hoja.className = ""; });
+
+/* ═══════════════ render ═══════════════ */
+function filaPersona(p){
+  const est = estadoEn(p.id, paradaAct);
+  const b = document.createElement("button");
+  b.className = "persona " + (est === "paso" ? "esta-paso" : est === "retirado" ? "esta-retirado" : "esta-falta");
+  const tramos = PARADAS.map(pa => {
+    const e = estadoEn(p.id, pa.id);
+    return `<i class="tramo ${e === "paso" ? "p" : e === "retirado" ? "r" : ""}"></i>`;
+  }).join("");
+  let meta = p.codigo;
+  const ev = eventos.get(`${p.id}_${paradaAct}`);
+  if (est === "paso")     meta += " · llegó " + new Date(ev.ts).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
+  if (est === "retirado") meta += " · en el micro";
+  b.innerHTML = `<div class="cuerpo"><div class="nom"></div><div class="meta"></div></div><div class="tramos">${tramos}</div>`;
+  b.querySelector(".nom").textContent  = p.nombre;
+  b.querySelector(".meta").textContent = meta;
+  b.addEventListener("click", () => abrirHoja(p));
+  return b;
+}
+
+function pintarSync(){
+  const punto = document.getElementById("hPunto"), txt = document.getElementById("hSyncTxt");
+  if (!leer(K.fb, null)){ punto.className = "punto"; txt.textContent = "solo este teléfono"; return; }
+  if (pendientes.size > 0){
+    punto.className = "punto espera";
+    txt.textContent = `${pendientes.size} sin subir`;
+    return;
+  }
+  if (!fbApi || !navigator.onLine){ punto.className = "punto mal"; txt.textContent = "sin conexión"; return; }
+  const s = Math.round((Date.now() - ultimaSync) / 1000);
+  punto.className = "punto " + (s < 90 ? "ok" : "espera");
+  txt.textContent = s < 60 ? "al día" : s < 3600 ? `hace ${Math.round(s/60)} min` : `hace ${Math.round(s/3600)} h`;
+}
+
+function pintar(){
+  const pa = paradaAct === null ? null : PARADAS[paradaAct];
+  document.getElementById("hParada").textContent  = pa ? pa.nombre : "Elegí tu puesto";
+  document.getElementById("hOperador").textContent = pa ? pa.sub + (operador ? " · " + operador : "") : "Andá a ajustes";
+  pintarSync();
+  if (paradaAct === null) return;
+
+  const faltan = [], pasaron = [], retirados = [];
+  for (const p of PERSONAS){
+    const e = estadoEn(p.id, paradaAct);
+    (e === "paso" ? pasaron : e === "retirado" ? retirados : faltan).push(p);
+  }
+  document.getElementById("cFaltan").textContent    = faltan.length;
+  document.getElementById("cPasaron").textContent   = pasaron.length;
+  document.getElementById("cRetirados").textContent = retirados.length;
+  const badge = document.getElementById("navBadge");
+  badge.textContent = faltan.length;
+  badge.style.display = faltan.length ? "" : "none";
+
+  const lf = document.getElementById("listaFaltan");
+  lf.innerHTML = "";
+  if (!faltan.length){
+    lf.innerHTML = `<div class="vacio"><b>Llegaron todos</b>No queda nadie por marcar en ${pa.nombre}.</div>`;
+  } else {
+    for (const p of faltan) lf.appendChild(filaPersona(p));
+  }
+
+  const q  = document.getElementById("buscar").value.trim().toUpperCase();
+  const lt = document.getElementById("listaTodos");
+  lt.innerHTML = "";
+  const vis = PERSONAS.filter(p => !q || p.nombre.toUpperCase().includes(q) || p.codigo.includes(q) || p.id.includes(q));
+  if (!vis.length) lt.innerHTML = `<div class="vacio">Nadie coincide con «${q}».</div>`;
+  else for (const p of vis) lt.appendChild(filaPersona(p));
+}
+
+/* ═══════════════ navegación ═══════════════ */
+function irA(v){
+  document.querySelectorAll(".vista").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.vista === v));
+  if (v !== "escanear") apagarCam();
+  main.scrollTop = 0;
+}
+document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => irA(b.dataset.vista)));
+document.getElementById("btnConfig").addEventListener("click", () => irA("config"));
+const main = document.querySelector("main");
+
+/* ═══════════════ entrada manual ═══════════════ */
+const $cod = document.getElementById("codigo");
+const enviarCodigo = () => {
+  const v = $cod.value.trim();
+  if (v){ procesar(v, false); $cod.value = ""; }
+};
+document.getElementById("btnCodigo").addEventListener("click", enviarCodigo);
+$cod.addEventListener("keydown", e => { if (e.key === "Enter") enviarCodigo(); });
+$cod.addEventListener("input", () => { if ($cod.value.length === 4) enviarCodigo(); });
+document.getElementById("buscar").addEventListener("input", pintar);
+
+/* ═══════════════ config ═══════════════ */
+const $sel = document.getElementById("selParada");
+$sel.innerHTML = `<option value="">— elegir —</option>` +
+  PARADAS.map(p => `<option value="${p.id}">${p.nombre} (${p.sub})</option>`).join("");
+$sel.value = paradaAct === null ? "" : String(paradaAct);
+$sel.addEventListener("change", () => {
+  paradaAct = $sel.value === "" ? null : Number($sel.value);
+  grabar(K.parada, paradaAct); pintar();
+});
+
+const $op = document.getElementById("inpOperador");
+$op.value = operador;
+$op.addEventListener("change", () => { operador = $op.value.trim(); grabar(K.operador, operador); pintar(); });
+
+const $nom = document.getElementById("inpNombres");
+$nom.value = PERSONAS.map(p => p.nombre).join("\n");
+document.getElementById("btnNombres").addEventListener("click", () => {
+  const lineas = $nom.value.split("\n").map(s => s.trim()).filter(Boolean);
+  if (!lineas.length){ alert("La lista quedó vacía."); return; }
+  PERSONAS = lineas.map((n, i) => PERSONAS_DEFAULT[i]
+    ? {...PERSONAS_DEFAULT[i], nombre:n}
+    : {id:`P${String(i+1).padStart(2,"0")}`, nombre:n, codigo:codigoExtra(i)});
+  grabar(K.personas, PERSONAS); pintar();
+  alert(`Guardado: ${PERSONAS.length} peregrinos. Volvé a imprimir las pulseras si cambió el orden.`);
+});
+function codigoExtra(i){                                  // determinístico para índices > 60
+  const A = "ACDEFGHJKLMNPQRTUVWXY3479"; let n = (i + 1) * 7919, s = "";
+  for (let k = 0; k < 4; k++){ s += A[n % A.length]; n = Math.floor(n / A.length) + 31 * (k + 1); }
+  return s;
+}
+
+const $grupo = document.getElementById("inpGrupo"); $grupo.value = grupo;
+const $fb = document.getElementById("inpFb");
+const cfgGuardada = leer(K.fb, null);
+if (cfgGuardada) $fb.value = JSON.stringify(cfgGuardada, null, 2);
+document.getElementById("btnFb").addEventListener("click", () => {
+  grupo = ($grupo.value.trim() || "peregrinacion-2026"); grabar(K.grupo, grupo);
+  const t = $fb.value.trim();
+  if (!t){ localStorage.removeItem(K.fb); fbApi = null; pintar(); alert("Sincronización desactivada."); return; }
+  try{
+    const cfg = JSON.parse(t.replace(/^\s*(const|let|var)\s+\w+\s*=\s*/, "").replace(/;\s*$/, ""));
+    if (!cfg.projectId || !cfg.apiKey) throw new Error("faltan apiKey o projectId");
+    grabar(K.fb, cfg); fbApi = null; conectar();
+    alert("Guardado. Mirá el indicador de arriba a la derecha: cuando diga «al día» está conectado.");
+  }catch(e){ alert("Ese texto no es una configuración válida: " + e.message); }
+});
+
+document.getElementById("btnCsv").addEventListener("click", () => {
+  const m = porId();
+  const filas = [["persona_id","nombre","codigo","parada","lugar","estado","hora","operador"]];
+  for (const ev of [...eventos.values()].sort((a,b) => a.ts - b.ts)){
+    const p = m.get(ev.personaId);
+    filas.push([ev.personaId, p?.nombre ?? "?", p?.codigo ?? "?", ev.parada,
+                PARADAS[ev.parada]?.nombre ?? "?", ev.estado,
+                new Date(ev.ts).toLocaleString("es-AR"), ev.operador]);
+  }
+  const csv = filas.map(f => f.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\uFEFF" + csv], {type:"text/csv;charset=utf-8"}));
+  a.download = `peregrinacion-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+});
+
+document.getElementById("btnReset").addEventListener("click", () => {
+  if (!confirm("Se borran todos los registros de este teléfono. ¿Seguro?")) return;
+  eventos.clear(); pendientes.clear(); guardarEventos(); pintar();
+});
+
+/* ═══════════════ arranque ═══════════════ */
+if (location.hash.length > 1){
+  const t = location.hash.slice(1);
+  history.replaceState(null, "", location.pathname);
+  setTimeout(() => procesar(t, false), 400);
+}
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+irA(paradaAct === null ? "config" : "escanear");
+pintar();
+conectar();
+</script>
+</body>
+</html>
