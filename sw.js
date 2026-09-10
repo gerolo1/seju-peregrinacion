@@ -1,9 +1,9 @@
 /* Cachea la app y sus librerías para que abra sin señal en la ruta. */
-const CACHE = "peregrinacion-v1";
+const CACHE = "peregrinacion-v2";
 const BASE = [
   "./", "./index.html", "./pulseras.html", "./manifest.json",
   "https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js",
-  "https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js",
+  "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js",
   "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
   "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
 ];

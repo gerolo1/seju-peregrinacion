@@ -4,25 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Imprimir pulseras</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
-:root{--noche:#0B1220;--panel:#141F33;--borde:#283A57;--texto:#EAF1FA;--tenue:#8CA2C0;--vela:#F2A93B}
+:root{--noche:#0B1220;--panel:#141F33;--borde:#283A57;--texto:#EAF1FA;--tenue:#8CA2C0;
+  --vela:#F2A93B;--falta:#FF6F5E;--paso:#3ECF8E}
 *{box-sizing:border-box}
 body{margin:0;background:var(--noche);color:var(--texto);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5}
-.panel{max-width:760px;margin:0 auto;padding:28px 20px 44px}
+.panel{max-width:780px;margin:0 auto;padding:28px 20px 44px}
 h1{font-size:27px;font-weight:660;letter-spacing:-.02em;margin:0 0 6px}
 .intro{color:var(--tenue);font-size:15px;margin:0 0 26px;max-width:64ch}
 label{display:block;font-size:14px;color:var(--tenue);margin:0 0 7px}
 input{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:12px;
   color:var(--texto);padding:13px 15px;font-size:15px;font-family:inherit;margin-bottom:18px}
 .par{display:flex;gap:14px}.par>div{flex:1}
-button{background:var(--vela);color:#241704;border:none;border-radius:12px;
-  padding:15px 26px;font-size:16px;font-weight:640;cursor:pointer;font-family:inherit}
-.nota{color:var(--tenue);font-size:13px;margin-top:22px;max-width:64ch}
+.acciones{display:flex;gap:10px;flex-wrap:wrap}
+button{background:var(--panel);border:1px solid var(--borde);border-radius:12px;color:var(--texto);
+  padding:15px 24px;font-size:16px;font-weight:620;cursor:pointer;font-family:inherit}
+button.primario{background:var(--vela);color:#241704;border-color:var(--vela)}
+button:disabled{opacity:.45;cursor:default}
+.nota{color:var(--tenue);font-size:13px;margin-top:24px;max-width:64ch}
 .nota strong{color:var(--texto);font-weight:620}
-#estado{margin-top:14px;font-size:14px;color:var(--vela);min-height:20px}
-#hojas{display:none}
+#estado{margin:16px 0 0;font-size:14.5px;min-height:22px}
+#estado.error{color:var(--falta)} #estado.listo{color:var(--paso)}
+.previa-tit{font-size:13px;color:var(--vela);font-weight:650;margin:30px 0 14px;
+  padding-bottom:8px;border-bottom:1px solid var(--borde)}
 
 @media print{
   body{background:#fff;color:#000}
@@ -30,13 +36,16 @@ button{background:var(--vela);color:#241704;border:none;border-radius:12px;
   #hojas{display:block}
   @page{size:A4 portrait;margin:9mm}
 }
+#hojas{max-width:780px;margin:0 auto;padding:0 20px 40px}
+@media print{ #hojas{max-width:none;margin:0;padding:0} }
+
 .pulsera{
   display:flex;align-items:center;gap:4mm;
   height:24mm;padding:0 3.5mm;border:.35mm dashed #999;border-radius:1.5mm;
   margin-bottom:1.5mm;background:#fff;color:#000;break-inside:avoid;page-break-inside:avoid;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
-.pulsera img{width:19mm;height:19mm;display:block;flex:0 0 auto}
+.pulsera img{width:19mm;height:19mm;display:block;flex:0 0 auto;image-rendering:pixelated}
 .num{font-size:21pt;font-weight:800;letter-spacing:-.02em;flex:0 0 auto;
   font-variant-numeric:tabular-nums;line-height:1}
 .cod{font-size:13pt;font-weight:750;letter-spacing:.16em;flex:0 0 auto;font-variant-numeric:tabular-nums}
@@ -62,14 +71,19 @@ button{background:var(--vela);color:#241704;border:none;border-radius:12px;
     <div><label for="hasta">Hasta el número</label><input id="hasta" type="number" value="115" min="1" max="115"></div>
   </div>
 
-  <button id="btn">Generar e imprimir</button>
-  <div id="estado"></div>
+  <div class="acciones">
+    <button id="btn" class="primario">Generar</button>
+    <button id="btnPrint" disabled>Imprimir</button>
+  </div>
+  <p id="estado"></p>
 
   <p class="nota">Imprimí en papel de 120 g o más y cortá por la línea de puntos. Para cerrarla va
   bien cinta de embalar transparente sobre las dos puntas: aguanta la lluvia y no se despega con
   la transpiración.<br><br>
-  <strong>Antes de tirar las 115:</strong> imprimí una sola, cerrala en una muñeca, arrugala un poco
-  y escaneala de noche con la linterna del celular. Si esa anda, andan todas.</p>
+  <strong>Antes de tirar las 115:</strong> imprimí una sola, cerrala en una muñeca, arrugala un
+  poco y escaneala de noche con la linterna del celular. Si esa anda, andan todas.</p>
+
+  <div id="previaTit" class="previa-tit" style="display:none">Vista previa</div>
 </div>
 
 <div id="hojas"></div>
@@ -91,37 +105,62 @@ const CODIGOS = [
 ];
 
 const $estado = document.getElementById("estado");
+const $btn    = document.getElementById("btn");
+const $print  = document.getElementById("btnPrint");
+const $hojas  = document.getElementById("hojas");
+const $tit    = document.getElementById("previaTit");
 
-document.getElementById("btn").addEventListener("click", async () => {
+const decir = (txt, clase) => { $estado.textContent = txt; $estado.className = clase || ""; };
+
+// Si la librería no cargó, decirlo ahora y no cuando se aprieta el botón.
+if (typeof qrcode === "undefined"){
+  decir("No cargó la librería de QR. Abrí esta página con conexión la primera vez, y revisá que ningún bloqueador esté frenando cdn.jsdelivr.net.", "error");
+  $btn.disabled = true;
+}
+
+function generar(){
   const base = document.getElementById("base").value.trim().replace(/#.*$/, "").replace(/\/?$/, "/");
-  if (!/^https?:\/\//.test(base)){ $estado.textContent = "La dirección tiene que empezar con https://"; return; }
+  if (!/^https?:\/\//.test(base)){ decir("La dirección tiene que empezar con https://", "error"); return; }
 
-  let desde = Math.max(1, parseInt(document.getElementById("desde").value, 10) || 1);
-  let hasta = Math.min(CODIGOS.length, parseInt(document.getElementById("hasta").value, 10) || CODIGOS.length);
-  if (hasta < desde){ $estado.textContent = "El rango está al revés."; return; }
+  const desde = Math.max(1, parseInt(document.getElementById("desde").value, 10) || 1);
+  const hasta = Math.min(CODIGOS.length, parseInt(document.getElementById("hasta").value, 10) || CODIGOS.length);
+  if (hasta < desde){ decir("El rango está al revés.", "error"); return; }
 
-  const cont = document.getElementById("hojas");
-  cont.innerHTML = "";
-  $estado.textContent = "Generando los QR…";
+  $hojas.innerHTML = "";
+  $print.disabled = true;
+  decir(`Generando ${hasta - desde + 1} pulseras…`);
 
-  for (let n = desde; n <= hasta; n++){
-    const id  = `P${String(n).padStart(3,"0")}`;
-    const cod = CODIGOS[n-1];
-    const png = await QRCode.toDataURL(`${base}#${id}`, {margin:0, width:320, errorCorrectionLevel:"M"});
+  try{
+    for (let n = desde; n <= hasta; n++){
+      const id  = `P${String(n).padStart(3,"0")}`;
+      const cod = CODIGOS[n-1];
 
-    const tira = document.createElement("div");
-    tira.className = "pulsera";
-    tira.innerHTML =
-      `<img alt=""><span class="num">${n}</span><span class="cod">${cod}</span>` +
-      `<div class="renglon"></div>` +
-      `<div class="cierre">PEREGRINACIÓN A LUJÁN</div><img alt="">`;
-    tira.querySelectorAll("img").forEach(im => im.src = png);
-    cont.appendChild(tira);
+      const qr = qrcode(0, "M");            // 0 = elige solo el tamaño según el contenido
+      qr.addData(`${base}#${id}`);
+      qr.make();
+      const img = qr.createDataURL(8, 2);   // celda de 8px, margen de 2 celdas
+
+      const tira = document.createElement("div");
+      tira.className = "pulsera";
+      tira.innerHTML =
+        `<img alt=""><span class="num">${n}</span><span class="cod">${cod}</span>` +
+        `<div class="renglon"></div>` +
+        `<div class="cierre">PEREGRINACIÓN A LUJÁN</div><img alt="">`;
+      tira.querySelectorAll("img").forEach(im => im.src = img);
+      $hojas.appendChild(tira);
+    }
+  }catch(e){
+    decir("Se cortó la generación: " + (e && e.message ? e.message : e), "error");
+    return;
   }
 
-  $estado.textContent = `${hasta - desde + 1} pulseras listas. Abriendo el diálogo de impresión…`;
-  setTimeout(() => print(), 400);
-});
+  $tit.style.display = "";
+  $print.disabled = false;
+  decir(`Listas ${hasta - desde + 1} pulseras. Revisá la vista previa acá abajo y después tocá «Imprimir».`, "listo");
+}
+
+$btn.addEventListener("click", generar);
+$print.addEventListener("click", () => print());
 </script>
 </body>
 </html>
