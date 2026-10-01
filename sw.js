@@ -1,5 +1,5 @@
 /* Cachea la app y sus librerías para que abra sin señal en la ruta. */
-const CACHE = "peregrinacion-v2";
+const CACHE = "peregrinacion-v3";
 const BASE = [
   "./", "./index.html", "./pulseras.html", "./manifest.json",
   "https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js",
@@ -29,6 +29,24 @@ self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   // El tráfico de Firestore nunca se cachea: siempre tiene que ir a la red.
   if (url.includes("firestore.googleapis.com") || url.includes("google.firestore")) return;
+
+  // El documento HTML siempre se pide a la red primero: así un cambio se ve
+  // apenas se publica, sin esperar un segundo reload. La caché queda solo
+  // como respaldo para cuando no hay señal.
+  if (e.request.mode === "navigate" || e.request.destination === "document"){
+    e.respondWith((async () => {
+      try{
+        const r = await fetch(e.request);
+        if (r.ok) (await caches.open(CACHE)).put(e.request, r.clone());
+        return r;
+      }catch(err){
+        const fallback = await caches.match(e.request) || await caches.match("./index.html");
+        if (fallback) return fallback;
+        throw err;
+      }
+    })());
+    return;
+  }
 
   e.respondWith((async () => {
     const hit = await caches.match(e.request);
