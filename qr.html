@@ -60,14 +60,14 @@ button:disabled{opacity:.45;cursor:default}
   <h1>QR para recortar</h1>
   <p class="intro">Cuadraditos con el QR, el número de pulsera y el código de cuatro letras.
   Se recortan y se pegan sobre la pulsera. El número y el código van impresos abajo de cada QR
-  porque si no son 115 cuadrados idénticos y no hay forma de saber cuál es cuál.</p>
+  porque si no son 120 cuadrados idénticos y no hay forma de saber cuál es cuál.</p>
 
   <label for="base">Dirección de la app</label>
   <input id="base" value="https://gerolo1.github.io/seju-peregrinacion/">
 
   <div class="par">
-    <div><label for="desde">Desde</label><input id="desde" type="number" value="1" min="1" max="115"></div>
-    <div><label for="hasta">Hasta</label><input id="hasta" type="number" value="115" min="1" max="115"></div>
+    <div><label for="desde">Desde</label><input id="desde" type="number" value="1" min="1" max="120"></div>
+    <div><label for="hasta">Hasta</label><input id="hasta" type="number" value="120" min="1" max="120"></div>
     <div><label for="tam">Lado del QR (mm)</label><input id="tam" type="number" value="18" min="10" max="45"></div>
   </div>
 
@@ -77,12 +77,12 @@ button:disabled{opacity:.45;cursor:default}
   </div>
   <p id="estado"></p>
 
-  <p class="nota">A 18 mm entran unos 96 por hoja A4, así que las 115 salen en dos hojas.
+  <p class="nota">A 18 mm entran unos 96 por hoja A4, así que las 120 salen en dos hojas.
   Si el papel de la pulsera es angosto, bajá a 15 mm; para escanear de noche con papel arrugado,
   18 mm o más anda mejor.<br><br>
   Pegalos con cinta transparente por encima en vez de con plasticola: además de sujetar,
   impermeabiliza el QR y evita que la tinta se corra con la transpiración.<br><br>
-  <strong>Antes de imprimir los 115:</strong> imprimí uno, pegalo, arrugalo un poco y escaneálo
+  <strong>Antes de imprimir los 120:</strong> imprimí uno, pegalo, arrugalo un poco y escaneálo
   de noche con la linterna. Si ese anda, andan todos.</p>
 
   <div id="previaTit" class="previa-tit" style="display:none">Vista previa</div>
@@ -104,6 +104,7 @@ const CODIGOS = [
   "CYJR","RMQH","VLTM","KAWL","RW3P","QHF3","PDU9","FNA7","W7KF","WMAJ",
   "3943","ADRE","9K3N","3ERA","MPHF","QHEU","D7PQ","D4Q3","P4NH","C7WG",
   "MLFN","XGYV","RXA7","DKHM","AC7H",
+  "YEA7","KJJF","7E37","VDWQ","CADH",
 ];
 
 const ANCHO_UTIL_MM = 194;              // A4 (210) menos 8 mm de margen a cada lado
