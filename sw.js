@@ -30,10 +30,13 @@ self.addEventListener("fetch", e => {
   // El tráfico de Firestore nunca se cachea: siempre tiene que ir a la red.
   if (url.includes("firestore.googleapis.com") || url.includes("google.firestore")) return;
 
-  // El documento HTML siempre se pide a la red primero: así un cambio se ve
-  // apenas se publica, sin esperar un segundo reload. La caché queda solo
-  // como respaldo para cuando no hay señal.
-  if (e.request.mode === "navigate" || e.request.destination === "document"){
+  // El sábado (día de la caminata) el HTML va cache-first, a prueba de señal mala.
+  // El resto de la semana va network-first, para poder probar cambios sin esperar
+  // dos reloads. 6 = sábado según Date.getDay().
+  const esDocumento = e.request.mode === "navigate" || e.request.destination === "document";
+  const esSabado = new Date().getDay() === 6;
+
+  if (esDocumento && !esSabado){
     e.respondWith((async () => {
       try{
         const r = await fetch(e.request);
